@@ -52,7 +52,7 @@ class MAXSwerveModule {
         .PositionConversionFactor(turningFactor)          // radians
         .VelocityConversionFactor(turningFactor / 60.0);  // radians per second
     turningConfig.closedLoop
-        .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
         // These are example gains you may need to them for your own robot!
         .Pid(1, 0, 0)
         .OutputRange(-1, 1)
