@@ -98,3 +98,34 @@ namespace OIConstants {
 constexpr int kDriverControllerPort = 0;
 constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
+
+namespace ShooterConstants 
+{
+    constexpr int kShooter_Motor_A_ID = 0;
+    constexpr int kShooter_Motor_B_ID = 0;
+    
+}
+
+namespace HopperConstants 
+{
+    constexpr int kHopper_Motor_A_ID = 0;
+    constexpr int kHopper_Motor_B_ID = 0;
+}
+
+namespace IntakeConstants 
+{
+    constexpr int kIntake_Motor_A_ID = 0;
+    constexpr int kIntake_Motor_B_ID = 0;
+}
+
+namespace UpperClimbConstants 
+{
+    constexpr int kUpperClimb_Motor_A_ID = 0;
+    constexpr int kUpperClimb_Motor_B_ID = 0;
+}
+
+namespace LowerClimbConstants 
+{
+    constexpr int kLowerClimb_Motor_A_ID = 0;
+    constexpr int kLowerClimb_Motor_B_ID = 0;
+}

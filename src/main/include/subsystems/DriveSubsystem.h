@@ -15,6 +15,8 @@
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
+#include <frc/smartdashboard/SmartDashboard.h>
+
 
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
