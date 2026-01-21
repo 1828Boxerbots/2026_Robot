@@ -10,6 +10,8 @@
 #include <units/current.h>
 #include <units/length.h>
 #include <units/velocity.h>
+#include <frc/geometry/Translation2d.h>
+#include <pathplanner/lib/config/PIDConstants.h>
 
 #include <numbers>
 
@@ -92,6 +94,11 @@ constexpr double kPThetaController = 0.5;
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
+
+    //Pathplanner PID Constants
+inline constexpr pathplanner::PIDConstants translationConstants(5.0, 0.0, 0.0);
+inline constexpr pathplanner::PIDConstants rotationConstants(5.0, 0.0, 0.0);
+
 }  // namespace AutoConstants
 
 namespace OIConstants {

@@ -6,12 +6,23 @@
 
 #include <frc/ADIS16470_IMU.h>
 #include <frc/filter/SlewRateLimiter.h>
-#include <frc/geometry/Pose2d.h>
+
 #include <frc/geometry/Rotation2d.h>
-#include <frc/kinematics/ChassisSpeeds.h>
+
 #include <frc/kinematics/SwerveDriveKinematics.h>
-#include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc2/command/SubsystemBase.h>
+
+//Odometry
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/config/RobotConfig.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <frc/geometry/Pose2d.h>
+#include <frc/kinematics/SwerveDriveOdometry.h>
+#include <frc/kinematics/ChassisSpeeds.h>
+#include <frc/DriverStation.h>
+
+
+
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
@@ -85,6 +96,20 @@ class DriveSubsystem : public frc2::SubsystemBase {
    */
   frc::Pose2d GetPose();
 
+  
+  /** 
+   * Returns the current chassis speeds of the robot.
+   *
+   * @return The chassis speeds.
+   * @param xSpeed        Speed of the robot in the x direction
+   *                      (forward/backwards).
+   * @param ySpeed        Speed of the robot in the y direction (sideways).
+   * @param rot        Angular rate of the robot.
+   */
+  frc::ChassisSpeeds GetChassisSpeeds(units::meters_per_second_t xSpeed,
+             units::meters_per_second_t ySpeed, units::radians_per_second_t rot);
+
+
   /**
    * Resets the odometry to the specified pose.
    *
@@ -102,6 +127,14 @@ class DriveSubsystem : public frc2::SubsystemBase {
       frc::Translation2d{-DriveConstants::kWheelBase / 2,
                          -DriveConstants::kTrackWidth / 2}};
 
+   units::meter_t Get_FrontLeft_Encoder(); //FL or Front Left
+
+   units::meter_t  Get_RearLeft_Encoder(); // RL or Rear Left
+
+  units::meter_t Get_FrontRight_Encoder(); // FR or Front Right
+
+   units::meter_t Get_RearRight_Encoder(); // RR or Rear Right
+   
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -118,3 +151,5 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // 4 defines the number of modules
   frc::SwerveDriveOdometry<4> m_odometry;
 };
+
+

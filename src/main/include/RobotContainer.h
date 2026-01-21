@@ -22,6 +22,12 @@
 #include "subsystems/UpperClimbSub.h"
 #include "subsystems/ShooterSub.h"
 
+//Path planners includes
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
+#include <memory>
+
+
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -44,6 +50,7 @@ class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_drive;
+  
 
 
   // The chooser for the autonomous routines

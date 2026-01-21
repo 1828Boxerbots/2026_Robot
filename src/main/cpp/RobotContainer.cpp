@@ -15,6 +15,7 @@
 #include <frc2/command/button/JoystickButton.h>
 #include <units/angle.h>
 #include <units/velocity.h>
+#include <units/length.h>
 
 #include <utility>
 
@@ -22,9 +23,41 @@
 #include "subsystems/DriveSubsystem.h"
 
 using namespace DriveConstants;
+using namespace pathplanner;
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
+    NamedCommands::registerCommand
+    (
+        "DriveForward", 
+        std::move
+            (frc2::FunctionalCommand 
+                (
+                    [this]{m_drive.ResetEncoders();}, // Initialize: reset encoders to 0 when starting autonomous
+                    [this]{m_drive.Drive(3_mps, 0_mps, 0_rad_per_s, false);}, // Execute: Drive forward 3 meters per second
+                    [this](bool interrupted){m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false);}, // End
+                    [this]
+                        {
+                            units::meter_t flDist = m_drive.Get_FrontLeft_Encoder();
+                            units::meter_t frDist  = m_drive.Get_FrontRight_Encoder();
+                            units::meter_t rlDist = m_drive.Get_RearLeft_Encoder();
+                            units::meter_t rrDist = m_drive.Get_RearRight_Encoder();
+
+                            if (flDist >= 3_m and frDist >= 3_m and rlDist >= 3_m and rrDist >= 3_m)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }, // isfinished()
+
+                        {&m_drive} // reference to the subsystem were using
+                ).ToPtr()
+            )
+        ); // <- This example method returns CommandPtr},
+
 
   // Configure the button bindings
   ConfigureButtonBindings();
@@ -92,9 +125,21 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
   // Reset odometry to the starting pose of the trajectory.
   m_drive.ResetOdometry(exampleTrajectory.InitialPose());
 
+
   // no auto
   return new frc2::SequentialCommandGroup(
       std::move(swerveControllerCommand),
       frc2::InstantCommand(
           [this]() { m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false); }, {}));
-}
+
+ //Autonomous odometry using pathplanner
+
+    using namespace pathplanner;
+
+    // This method loads the auto when it is called, however, it is recommended
+    // to first load your paths/autos when code starts, then return the
+    // pre-loaded auto/path
+    
+    return (PathPlannerAuto("Simple Auto").ToPtr().Unwrap().get());
+
+} 
