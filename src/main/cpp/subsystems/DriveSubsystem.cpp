@@ -32,6 +32,74 @@ DriveSubsystem::DriveSubsystem()
   // Usage reporting for MAXSwerve template
   HAL_Report(HALUsageReporting::kResourceType_RobotDrive,
              HALUsageReporting::kRobotDriveSwerve_MaxSwerve);
+             
+//Configuring the Autobuilder for PathPlanner
+        
+  units::meters_per_second_t xSpeed{0_mps};
+  units::meters_per_second_t ySpeed{0_mps};
+  units::radians_per_second_t rot{0_rad_per_s};
+
+  
+  RobotConfig config = RobotConfig::fromGUISettings();
+
+   // Configure the AutoBuilder last
+    AutoBuilder::configure(
+        // Robot pose supplier  
+        [this]()
+        { 
+          return GetPose(); 
+        },
+        // Method to reset odometry (will be called if your auto has a starting pose)
+        [this](const frc::Pose2d& pose)
+        { 
+          ResetOdometry(pose); 
+        },
+         // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        [
+          this,
+          xSpeed,
+          ySpeed,
+          rot
+        ]
+        (
+          // units::meters_per_second_t xSpeed, 
+          // units::meters_per_second_t ySpeed, 
+          // units::radians_per_second_t rot
+        )
+        { 
+          return GetChassisSpeeds(xSpeed, ySpeed, rot);
+        },
+        // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+        [this](const frc::ChassisSpeeds& speeds)
+        { 
+          units::meters_per_second_t xSpeed = speeds.vx;
+          units::meters_per_second_t ySpeed = speeds.vy;
+          units::radians_per_second_t rot = speeds.omega;
+
+          Drive(xSpeed, ySpeed, rot, false); 
+        },
+        // PPHolonomicController is the built in path following controller for holonomic drive trains
+        std::make_shared<PPHolonomicDriveController>
+        ( 
+            AutoConstants::translationConstants, // Translation PID constants
+            AutoConstants::rotationConstants // Rotation PID constants
+        ),
+        // The robot configuration
+        config,
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
+        []() 
+        {
+            auto alliance = frc::DriverStation::GetAlliance();
+            if (alliance) 
+                return alliance.value() == frc::DriverStation::Alliance::kRed;
+                
+            return false;
+        },
+        // Reference to this subsystem to set requirements
+        this 
+    );
 }
 
 void DriveSubsystem::Periodic() {

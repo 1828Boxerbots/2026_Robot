@@ -54,6 +54,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
   // Set up config for trajectory
+  /*
   frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
                                AutoConstants::kMaxAcceleration);
   // Add kinematics to ensure max speed is actually obeyed
@@ -97,4 +98,18 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
       std::move(swerveControllerCommand),
       frc2::InstantCommand(
           [this]() { m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false); }, {}));
-}
+
+    */
+
+    
+ //Autonomous odometry using pathplanner
+
+    using namespace pathplanner;
+
+    // This method loads the auto when it is called, however, it is recommended
+    // to first load your paths/autos when code starts, then return the
+    // pre-loaded auto/path
+    
+    return (PathPlannerAuto("Simple Auto").ToPtr().Unwrap().get());
+
+} 
