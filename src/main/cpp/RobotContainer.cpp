@@ -21,6 +21,10 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+
+#include <frc/Filesystem.h>
+
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
@@ -109,7 +113,9 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
     // This method loads the auto when it is called, however, it is recommended
     // to first load your paths/autos when code starts, then return the
     // pre-loaded auto/path
-    
-    return (PathPlannerAuto("Simple Auto").ToPtr().Unwrap().get());
+    std::string deploydir = frc::filesystem::GetDeployDirectory();
+    std::string filepath = deploydir + "/pathplanner/autos/Simple Auto.path";
+    return (PathPlannerAuto(filepath).ToPtr().Unwrap().get());
 
 } 
+ 

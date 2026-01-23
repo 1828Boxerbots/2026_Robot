@@ -10,6 +10,11 @@
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
+#include <pathplanner/lib/config/RobotConfig.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <frc/DriverStation.h>
+
 #include "Constants.h"
 
 using namespace DriveConstants;
@@ -40,10 +45,10 @@ DriveSubsystem::DriveSubsystem()
   units::radians_per_second_t rot{0_rad_per_s};
 
   
-  RobotConfig config = RobotConfig::fromGUISettings();
+  pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
 
    // Configure the AutoBuilder last
-    AutoBuilder::configure(
+    pathplanner::AutoBuilder::configure(
         // Robot pose supplier  
         [this]()
         { 
@@ -79,10 +84,10 @@ DriveSubsystem::DriveSubsystem()
           Drive(xSpeed, ySpeed, rot, false); 
         },
         // PPHolonomicController is the built in path following controller for holonomic drive trains
-        std::make_shared<PPHolonomicDriveController>
+        std::make_shared<pathplanner::PPHolonomicDriveController>
         ( 
-            AutoConstants::translationConstants, // Translation PID constants
-            AutoConstants::rotationConstants // Rotation PID constants
+            pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
+            pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
         ),
         // The robot configuration
         config,
@@ -188,4 +193,19 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
        m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
       pose);
+
+      }
+frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds(units::meters_per_second_t xSpeed,
+             units::meters_per_second_t ySpeed, units::radians_per_second_t rot) 
+{ 
+  // Convert the commanded speeds into the correct units for the drivetrain
+  units::meters_per_second_t xSpeedDelivered =
+      xSpeed.value() * DriveConstants::kMaxSpeed;
+  units::meters_per_second_t ySpeedDelivered =
+      ySpeed.value() * DriveConstants::kMaxSpeed;
+  units::radians_per_second_t rotDelivered =
+      rot.value() * DriveConstants::kMaxAngularSpeed;
+
+  return frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered};
+
 }
