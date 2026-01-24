@@ -13,6 +13,7 @@
 class VisionSub : public frc2::SubsystemBase {
  public:
   VisionSub();
+  ~VisionSub();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -23,16 +24,30 @@ class VisionSub : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  bool mRunCalibration;
-  int mSquareNumX = 5;
-  int mSquareNumY = 7;
-  float mSquareLength = 0.04;
-  float mMarkerLength = 0.02;
-  cv::Mat mBoard;
-  std::vector<cv::Mat> mAllCharucoCorners, mAllCharucoIds;
-  std::vector<std::vector<cv::Point2f>> mAllImagePoints;
-  std::vector<std::vector<cv::Point3f>> mAllObjectPoints;
-  std::vector<cv::Mat> mAllImages;
-  cv::Size mImageSize;
-  cv::Mat mImage;
+  bool m_runCalibration;
+  int m_squareNumX;
+  int m_squareNumY;
+  float m_squareLength;
+  float m_markerLength;
+  cv::Mat m_board;
+  std::vector<cv::Mat> m_allCharucoCorners, m_allCharucoIds;
+  std::vector<std::vector<cv::Point2f>> m_allImagePoints;
+  std::vector<std::vector<cv::Point3f>> m_allObjectPoints;
+  std::vector<cv::Mat> m_allImages;
+  cv::Size m_imageSize;
+  cv::Mat m_feed;
+  cv::Mat m_distCoeffs, m_cameraMatrix;
+  float m_markerSize;
+  cv::Mat m_grayFeed;
+  cv::Mat m_edgeFeed;
+  int m_lightThreshold;
+  int m_darkThreshold;
+  cv::Mat m_posFeed;
+  struct  AprilTagData
+  {
+    // value is in meters
+    double distance;
+  };
+
+  std::map<unsigned int, AprilTagData> m_tagData;
 };
