@@ -21,6 +21,7 @@
 #include "subsystems/LowerClimbSub.h"
 #include "subsystems/UpperClimbSub.h"
 #include "subsystems/ShooterSub.h"
+#include "subsystems/VisionSub.h"
 
 
 /**
@@ -44,6 +45,7 @@ class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_drive;
+  VisionSub m_Vision;
 
 
   // The chooser for the autonomous routines

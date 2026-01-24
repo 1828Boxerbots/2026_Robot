@@ -14,6 +14,9 @@
 
 VisionSub::VisionSub()
 {
+    cs::UsbCamera camera = frc::CameraServer::StartAutomaticCapture();
+    camera.SetResolution(640, 480);
+
     m_markerSize = 0.2667;
     m_squareNumX = 5;
     m_squareNumY = 7;
@@ -36,109 +39,109 @@ VisionSub::~VisionSub()
 void VisionSub::Periodic() 
 {
 
-    // cs::UsbCamera camera = frc::CameraServer::StartAutomaticCapture();
-    // camera.SetResolution(640, 480);
+    // frc::CameraServer::StartAutomaticCapture();
+
     cs::CvSink frame = frc::CameraServer::GetVideo();
-    cs::CvSource outputFeed = frc::CameraServer::PutVideo("video", 640, 480);
+    // cs::CvSource outputFeed = frc::CameraServer::PutVideo("Camera Feed", 640, 480);
 
     // cs::CvSink sink = cs::GrabFrameNoTimeout(&mImage);
 
-    frame.GrabFrameNoTimeout(m_feed);
+    // frame.GrabFrameNoTimeout(m_feed);
 
-    m_runCalibration = frc::SmartDashboard::GetBoolean("Run Camera Calibration", false);
-    if (m_runCalibration)
-    {
-        cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
-        cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
-        cv::aruco::ArucoDetector detector(dictionary, detectorParams);
-        cv::aruco::CharucoBoard charucoBoard = cv::aruco::CharucoBoard(cv::Size(m_squareNumX, m_squareNumY), m_squareLength, m_markerLength, dictionary);
+    // m_runCalibration = frc::SmartDashboard::GetBoolean("Run Camera Calibration", false);
+    // if (m_runCalibration)
+    // {
+    //     cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+    //     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+    //     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
+    //     cv::aruco::CharucoBoard charucoBoard = cv::aruco::CharucoBoard(cv::Size(m_squareNumX, m_squareNumY), m_squareLength, m_markerLength, dictionary);
 
-        std::vector<int> markerIds;
-        std::vector<std::vector<cv::Point2f>> markerCorners;
-        cv::Mat currentCharucoCorners, currentCharucoIds;
-        std::vector<cv::Point3f> currentObjectPoints;
-        std::vector<cv::Point2f> currentImagePoints;
-        cv::aruco::CharucoDetector charucoDetector(charucoBoard);
-        charucoDetector.detectBoard(m_feed, currentCharucoCorners, currentCharucoIds);
+    //     std::vector<int> markerIds;
+    //     std::vector<std::vector<cv::Point2f>> markerCorners;
+    //     cv::Mat currentCharucoCorners, currentCharucoIds;
+    //     std::vector<cv::Point3f> currentObjectPoints;
+    //     std::vector<cv::Point2f> currentImagePoints;
+    //     cv::aruco::CharucoDetector charucoDetector(charucoBoard);
+    //     charucoDetector.detectBoard(m_feed, currentCharucoCorners, currentCharucoIds);
 
-        if(currentCharucoCorners.total() > 5) 
-        {
-            // Match image points
-            charucoBoard.matchImagePoints(currentCharucoCorners, currentCharucoIds, currentObjectPoints, currentImagePoints);
+    //     if(currentCharucoCorners.total() > 5) 
+    //     {
+    //         // Match image points
+    //         charucoBoard.matchImagePoints(currentCharucoCorners, currentCharucoIds, currentObjectPoints, currentImagePoints);
  
-            if(!currentImagePoints.empty() && !currentObjectPoints.empty()) 
-            {
-                m_imageSize = m_feed.size();
+    //         if(!currentImagePoints.empty() && !currentObjectPoints.empty()) 
+    //         {
+    //             m_imageSize = m_feed.size();
 
-                cv::Mat cameraMatrix, distCoeffs;
-                // Calibrate camera using ChArUco
-                double repError = cv::calibrateCamera(m_allObjectPoints, m_allImagePoints, m_imageSize, cameraMatrix, distCoeffs, cv::noArray(), cv::noArray(), cv::noArray(), cv::noArray(), cv::noArray());
+    //             cv::Mat cameraMatrix, distCoeffs;
+    //             // Calibrate camera using ChArUco
+    //             double repError = cv::calibrateCamera(m_allObjectPoints, m_allImagePoints, m_imageSize, cameraMatrix, distCoeffs, cv::noArray(), cv::noArray(), cv::noArray(), cv::noArray(), cv::noArray());
                 
-                cv::FileStorage outputDistor("VisionConsfigs.txt", cv::FileStorage::WRITE);
-                outputDistor << "distortion_coefficients" << distCoeffs;
-                outputDistor.release();
+    //             cv::FileStorage outputDistor("VisionConsfigs.txt", cv::FileStorage::WRITE);
+    //             outputDistor << "distortion_coefficients" << distCoeffs;
+    //             outputDistor.release();
 
-                cv::FileStorage outputMatrix("VisionConsfigs.txt", cv::FileStorage::WRITE);
-                outputMatrix << "camera_matrix" << cameraMatrix;
-                outputMatrix.release();
-            }
-        }
-    }
+    //             cv::FileStorage outputMatrix("VisionConsfigs.txt", cv::FileStorage::WRITE);
+    //             outputMatrix << "camera_matrix" << cameraMatrix;
+    //             outputMatrix.release();
+    //         }
+    //     }
+    // }
 
-    //April tag detection scope
-    {
-        cv::Mat objPoints(4, 1, CV_32FC3);
-        objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-m_markerLength/2.f, m_markerLength/2.f, 0);
-        objPoints.ptr<cv::Vec3f>(0)[1] = cv::Vec3f(m_markerLength/2.f, m_markerLength/2.f, 0);
-        objPoints.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(m_markerLength/2.f, -m_markerLength/2.f, 0);
-        objPoints.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-m_markerLength/2.f, -m_markerLength/2.f, 0);
+    // //April tag detection scope
+    // {
+    //     cv::Mat objPoints(4, 1, CV_32FC3);
+    //     objPoints.ptr<cv::Vec3f>(0)[0] = cv::Vec3f(-m_markerLength/2.f, m_markerLength/2.f, 0);
+    //     objPoints.ptr<cv::Vec3f>(0)[1] = cv::Vec3f(m_markerLength/2.f, m_markerLength/2.f, 0);
+    //     objPoints.ptr<cv::Vec3f>(0)[2] = cv::Vec3f(m_markerLength/2.f, -m_markerLength/2.f, 0);
+    //     objPoints.ptr<cv::Vec3f>(0)[3] = cv::Vec3f(-m_markerLength/2.f, -m_markerLength/2.f, 0);
 
-        std::vector<int> markerIds;
-        std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
-        cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
-        cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
-        cv::aruco::ArucoDetector detector(dictionary, detectorParams);
-        detector.detectMarkers(m_feed, markerCorners, markerIds, rejectedCandidates);
-        cv::Mat outputImage = m_feed.clone();
-        cv::aruco::drawDetectedMarkers(outputImage, markerCorners, markerIds);
-        // cs::CvSource outputImage = frc::CameraServer::PutVideo("IdImage", 640, 480);
+    //     std::vector<int> markerIds;
+    //     std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    //     cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+    //     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+    //     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
+    //     detector.detectMarkers(m_feed, markerCorners, markerIds, rejectedCandidates);
+    //     cv::Mat outputImage = m_feed.clone();
+    //     cv::aruco::drawDetectedMarkers(outputImage, markerCorners, markerIds);
+    //     // cs::CvSource outputImage = frc::CameraServer::PutVideo("IdImage", 640, 480);
 
-        size_t nMarkers = markerCorners.size();
-        std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
-        cv::Mat PosFeed;
-        m_feed.copyTo(PosFeed);
+    //     size_t nMarkers = markerCorners.size();
+    //     std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
+    //     cv::Mat PosFeed;
+    //     m_feed.copyTo(PosFeed);
 
-        if(!markerIds.empty()) {
-            // Calculate pose for each marker
-            // std::cout << objPoints << std::endl << markerCorners.at(0) << std::endl << camMatrix << std::endl << distCoeffs << std::endl;
-            for (size_t i = 0; i < nMarkers; i++) {
-                solvePnP(objPoints, markerCorners.at(i), m_cameraMatrix, m_distCoeffs, rvecs.at(i), tvecs.at(i));
-            }
+    //     if(!markerIds.empty()) {
+    //         // Calculate pose for each marker
+    //         // std::cout << objPoints << std::endl << markerCorners.at(0) << std::endl << camMatrix << std::endl << distCoeffs << std::endl;
+    //         for (size_t i = 0; i < nMarkers; i++) {
+    //             solvePnP(objPoints, markerCorners.at(i), m_cameraMatrix, m_distCoeffs, rvecs.at(i), tvecs.at(i));
+    //         }
 
-            m_tagData.clear();
+    //         m_tagData.clear();
 
-            for(unsigned int i = 0; i < markerIds.size(); i++)
-            {
-                cv::drawFrameAxes(PosFeed, m_cameraMatrix, m_distCoeffs, rvecs[i], tvecs[i], m_markerSize * 1.5f, 2);
+    //         for(unsigned int i = 0; i < markerIds.size(); i++)
+    //         {
+    //             cv::drawFrameAxes(PosFeed, m_cameraMatrix, m_distCoeffs, rvecs[i], tvecs[i], m_markerSize * 1.5f, 2);
 
-                unsigned int tagId = markerIds[i];
+    //             unsigned int tagId = markerIds[i];
 
-                AprilTagData data
-                {
-                    std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
-                };
+    //             AprilTagData data
+    //             {
+    //                 std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
+    //             };
 
-                m_tagData.insert({tagId, data});
-            }
-            cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
-            // if(cv::waitKey(1) == 'c')
-            // {
-            //     std::cout<<tvecs[0]<<std::endl;//<<rvecs[0]<<std::endl;
-            //     mDistance = std::sqrt((tvecs[0](0) * tvecs[0](0)) + (tvecs[0](1) * tvecs[0](1)) + (tvecs[0](2) * tvecs[0](2)));
-            //     std::cout << mDistance << std::endl;
-            // }
-        }
-    }
+    //             m_tagData.insert({tagId, data});
+    //         }
+    //         cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
+    //         // if(cv::waitKey(1) == 'c')
+    //         // {
+    //         //     std::cout<<tvecs[0]<<std::endl;//<<rvecs[0]<<std::endl;
+    //         //     mDistance = std::sqrt((tvecs[0](0) * tvecs[0](0)) + (tvecs[0](1) * tvecs[0](1)) + (tvecs[0](2) * tvecs[0](2)));
+    //         //     std::cout << mDistance << std::endl;
+    //         // }
+    //     }
+    // }
 }
 
 /*
