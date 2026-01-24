@@ -114,7 +114,8 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
     // to first load your paths/autos when code starts, then return the
     // pre-loaded auto/path
     std::string deploydir = frc::filesystem::GetDeployDirectory();
-    std::string filepath = deploydir + "/pathplanner/autos/Simple Auto.path";
+    // std::string filepath = deploydir + "pathplanner/autos/Simple Auto.path";
+    std::string filepath = "Simple Auto";
     return (PathPlannerAuto(filepath).ToPtr().Unwrap().get());
 
 } 
