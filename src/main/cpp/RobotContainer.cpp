@@ -88,13 +88,9 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand()
             // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             [this](const frc::ChassisSpeeds& speeds)
             { 
-                // units::meters_per_second_t xSpeed = speeds.vx;
-                // units::meters_per_second_t ySpeed = speeds.vy;
-                // units::radians_per_second_t rot = speeds.omega;
-
-                units::meters_per_second_t xSpeed = 1.0_mps;
-                units::meters_per_second_t ySpeed = 0.0_mps;
-                units::radians_per_second_t rot = 0.0_rad_per_s;
+                units::meters_per_second_t xSpeed = speeds.vx;
+                units::meters_per_second_t ySpeed = speeds.vy;
+                units::radians_per_second_t rot = speeds.omega;
 
                 m_drive.Drive(xSpeed, ySpeed, rot, false); 
             },
@@ -123,8 +119,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand()
 
         // An example trajectory to follow.  All units in meters.
         std::string filepath = "Simple Auto";
-        auto path = pathplanner::PathPlannerPath::fromPathFile(filepath);
-        return (pathplanner::AutoBuilder::followPath(path));
+        return pathplanner::PathPlannerAuto(filepath).ToPtr();
     }
     catch(std::exception& e) 
     {
