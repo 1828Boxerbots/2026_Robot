@@ -16,6 +16,7 @@
 #include <frc/DriverStation.h>
 
 #include "Constants.h"
+#include <iostream>
 
 using namespace DriveConstants;
 
@@ -34,77 +35,15 @@ DriveSubsystem::DriveSubsystem()
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
                  frc::Pose2d{}} {
+  try {
   // Usage reporting for MAXSwerve template
   HAL_Report(HALUsageReporting::kResourceType_RobotDrive,
              HALUsageReporting::kRobotDriveSwerve_MaxSwerve);
-             
-//Configuring the Autobuilder for PathPlanner
-        
-  units::meters_per_second_t xSpeed{0_mps};
-  units::meters_per_second_t ySpeed{0_mps};
-  units::radians_per_second_t rot{0_rad_per_s};
-
-  
-  pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
-
-   // Configure the AutoBuilder last
-    pathplanner::AutoBuilder::configure(
-        // Robot pose supplier  
-        [this]()
-        { 
-          return GetPose(); 
-        },
-        // Method to reset odometry (will be called if your auto has a starting pose)
-        [this](const frc::Pose2d& pose)
-        { 
-          ResetOdometry(pose); 
-        },
-         // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        [
-          this,
-          xSpeed,
-          ySpeed,
-          rot
-        ]
-        (
-          // units::meters_per_second_t xSpeed, 
-          // units::meters_per_second_t ySpeed, 
-          // units::radians_per_second_t rot
-        )
-        { 
-          return GetChassisSpeeds(xSpeed, ySpeed, rot);
-        },
-        // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-        [this](const frc::ChassisSpeeds& speeds)
-        { 
-          units::meters_per_second_t xSpeed = speeds.vx;
-          units::meters_per_second_t ySpeed = speeds.vy;
-          units::radians_per_second_t rot = speeds.omega;
-
-          Drive(xSpeed, ySpeed, rot, false); 
-        },
-        // PPHolonomicController is the built in path following controller for holonomic drive trains
-        std::make_shared<pathplanner::PPHolonomicDriveController>
-        ( 
-            pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
-            pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
-        ),
-        // The robot configuration
-        config,
-        // Boolean supplier that controls when the path will be mirrored for the red alliance
-        // This will flip the path being followed to the red side of the field.
-        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
-        []() 
-        {
-            auto alliance = frc::DriverStation::GetAlliance();
-            if (alliance) 
-                return alliance.value() == frc::DriverStation::Alliance::kRed;
-                
-            return false;
-        },
-        // Reference to this subsystem to set requirements
-        this 
-    );
+  } 
+  catch(std::exception& e)
+  {
+    std::cout << e.what() << std::endl;
+  }
 }
 
 void DriveSubsystem::Periodic() {
@@ -194,18 +133,15 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
        m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
       pose);
 
-      }
-frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds(units::meters_per_second_t xSpeed,
-             units::meters_per_second_t ySpeed, units::radians_per_second_t rot) 
+}
+
+frc::ChassisSpeeds DriveSubsystem::GetRelativeChassisSpeeds() 
 { 
-  // Convert the commanded speeds into the correct units for the drivetrain
-  units::meters_per_second_t xSpeedDelivered =
-      xSpeed.value() * DriveConstants::kMaxSpeed;
-  units::meters_per_second_t ySpeedDelivered =
-      ySpeed.value() * DriveConstants::kMaxSpeed;
-  units::radians_per_second_t rotDelivered =
-      rot.value() * DriveConstants::kMaxAngularSpeed;
-
-  return frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered};
-
+  return kDriveKinematics.ToChassisSpeeds
+  (
+    m_frontLeft.GetState(),
+    m_frontRight.GetState(),
+    m_rearLeft.GetState(),
+    m_rearRight.GetState()
+  ); 
 }

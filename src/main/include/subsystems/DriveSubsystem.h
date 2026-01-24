@@ -102,6 +102,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
       frc::Translation2d{-DriveConstants::kWheelBase / 2,
                          -DriveConstants::kTrackWidth / 2}};
 
+    frc::ChassisSpeeds GetRelativeChassisSpeeds();
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -117,8 +118,4 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // Odometry class for tracking robot pose
   // 4 defines the number of modules
   frc::SwerveDriveOdometry<4> m_odometry;
-
-  frc::ChassisSpeeds GetChassisSpeeds(units::meters_per_second_t xSpeed,
-                                     units::meters_per_second_t ySpeed,
-                                     units::radians_per_second_t rot);
 };
