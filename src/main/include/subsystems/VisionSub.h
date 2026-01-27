@@ -43,6 +43,7 @@ class VisionSub : public frc2::SubsystemBase {
   int m_lightThreshold;
   int m_darkThreshold;
   cv::Mat m_posFeed;
+  cv::aruco::CharucoBoard m_charucoBoard;
   struct  AprilTagData
   {
     // value is in meters

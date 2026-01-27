@@ -25,6 +25,13 @@ VisionSub::VisionSub()
     m_lightThreshold = 175;
     m_darkThreshold = 85;
 
+    frc::SmartDashboard::PutBoolean("Run Camera Calibration", false);
+
+    cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+    cv::aruco::ArucoDetector detector(dictionary, detectorParams);
+    m_charucoBoard = cv::aruco::CharucoBoard(cv::Size(m_squareNumX, m_squareNumY), m_squareLength, m_markerLength, dictionary);
+
     // cv::FileStorage inputMatrix("VisionConsfigs.txt", cv::FileStorage::READ);
     // inputMatrix["camera_matrix"] >> vCameraMatrix;
     // inputMatrix.release();
@@ -39,30 +46,44 @@ VisionSub::~VisionSub()
 void VisionSub::Periodic() 
 {
 
-    // frc::CameraServer::StartAutomaticCapture();
+    // cs::CvSource outPut = frc::CameraServer::PutVideo("Camera Feed", 640, 480);
+    // cv::Mat mat = new Mat();
+    // frame.GrabFrame(mat);
+    // outPut.PutFrame(mat);
 
-    cs::CvSink frame = frc::CameraServer::GetVideo();
-    // cs::CvSource outputFeed = frc::CameraServer::PutVideo("Camera Feed", 640, 480);
+    // std::cout << "pos1" << std::endl;
 
-    // cs::CvSink sink = cs::GrabFrameNoTimeout(&mImage);
+    m_runCalibration = frc::SmartDashboard::GetBoolean("Run Camera Calibration", false);
 
-    // frame.GrabFrameNoTimeout(m_feed);
+    // std::cout << "pos2" << std::endl;
+    if (m_runCalibration)
+    {   
 
-    // m_runCalibration = frc::SmartDashboard::GetBoolean("Run Camera Calibration", false);
-    // if (m_runCalibration)
-    // {
-    //     cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
-    //     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
-    //     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
-    //     cv::aruco::CharucoBoard charucoBoard = cv::aruco::CharucoBoard(cv::Size(m_squareNumX, m_squareNumY), m_squareLength, m_markerLength, dictionary);
+        // std::cout << "pos3" << std::endl;
 
-    //     std::vector<int> markerIds;
-    //     std::vector<std::vector<cv::Point2f>> markerCorners;
-    //     cv::Mat currentCharucoCorners, currentCharucoIds;
-    //     std::vector<cv::Point3f> currentObjectPoints;
-    //     std::vector<cv::Point2f> currentImagePoints;
-    //     cv::aruco::CharucoDetector charucoDetector(charucoBoard);
-    //     charucoDetector.detectBoard(m_feed, currentCharucoCorners, currentCharucoIds);
+        // cs::CvSink frame = frc::CameraServer::GetVideo();
+
+        // std::cout << "pos4" << std::endl;
+
+        // frame.GrabFrame(m_feed, 0.01);
+
+        // std::cout << "pos5" << std::endl;
+
+        // if (!m_feed.empty())
+        //     {
+        //     std::vector<int> markerIds;
+        //     std::vector<std::vector<cv::Point2f>> markerCorners;
+        //     cv::Mat currentCharucoCorners, currentCharucoIds;
+        //     std::vector<cv::Point3f> currentObjectPoints;
+        //     std::vector<cv::Point2f> currentImagePoints;
+        //     cv::aruco::CharucoDetector charucoDetector(m_charucoBoard);
+        //     charucoDetector.detectBoard(m_feed, currentCharucoCorners, currentCharucoIds);
+
+        //     if(currentCharucoCorners.total() > 3)
+        //     {
+        //         std::cout << "detected Charuco Board" << std::endl;
+        //     }
+        // }   
 
     //     if(currentCharucoCorners.total() > 5) 
     //     {
@@ -86,7 +107,7 @@ void VisionSub::Periodic()
     //             outputMatrix.release();
     //         }
     //     }
-    // }
+    }
 
     // //April tag detection scope
     // {
