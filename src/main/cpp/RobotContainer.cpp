@@ -15,6 +15,7 @@
 #include <frc2/command/button/JoystickButton.h>
 #include <units/angle.h>
 #include <units/velocity.h>
+#include <units/length.h>
 
 #include <utility>
 
@@ -32,9 +33,41 @@
 #include <iostream>
 
 using namespace DriveConstants;
+using namespace pathplanner;
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
+    // NamedCommands::registerCommand
+    // (
+    //     "DriveForward", 
+    //     std::move
+    //         (frc2::FunctionalCommand 
+    //             (
+    //                 [this]{m_drive.ResetEncoders();}, // Initialize: reset encoders to 0 when starting autonomous
+    //                 [this]{m_drive.Drive(3_mps, 0_mps, 0_rad_per_s, false);}, // Execute: Drive forward 3 meters per second
+    //                 [this](bool interrupted){m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false);}, // End
+    //                 [this]
+    //                     {
+    //                         units::meter_t flDist = m_drive.Get_FrontLeft_Encoder();
+    //                         units::meter_t frDist  = m_drive.Get_FrontRight_Encoder();
+    //                         units::meter_t rlDist = m_drive.Get_RearLeft_Encoder();
+    //                         units::meter_t rrDist = m_drive.Get_RearRight_Encoder();
+
+    //                         if (flDist >= 3_m and frDist >= 3_m and rlDist >= 3_m and rrDist >= 3_m)
+    //                         {
+    //                             return true;
+    //                         }
+    //                         else
+    //                         {
+    //                             return false;
+    //                         }
+    //                     }, // isfinished()
+
+    //                     {&m_drive} // reference to the subsystem were using
+    //             ).ToPtr()
+    //         )
+    //     ); // <- This example method returns CommandPtr},
+
 
   // Configure the button bindings
   ConfigureButtonBindings();
@@ -62,67 +95,16 @@ void RobotContainer::ConfigureButtonBindings() {
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() 
-{
-    try
-    {
-        pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+  
+ //Autonomous odometry using pathplanner
 
-        // Configure the AutoBuilder last
-        pathplanner::AutoBuilder::configure(
-            // Robot pose supplier  
-            [this]()
-            {
-                return m_drive.GetPose();
-            },
-            // Method to reset odometry (will be called if your auto has a starting pose)
-            [this](const frc::Pose2d& pose)
-            { 
-                m_drive.ResetOdometry(pose); 
-            },
-            // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            [this]()
-            {
-                return m_drive.GetRelativeChassisSpeeds();
-            },
-            // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            [this](const frc::ChassisSpeeds& speeds)
-            { 
-                units::meters_per_second_t xSpeed = speeds.vx;
-                units::meters_per_second_t ySpeed = speeds.vy;
-                units::radians_per_second_t rot = speeds.omega;
+    using namespace pathplanner;
 
-                m_drive.Drive(xSpeed, ySpeed, rot, false); 
-            },
-            // PPHolonomicController is the built in path following controller for holonomic drive trains
-            std::make_shared<pathplanner::PPHolonomicDriveController>
-            ( 
-                pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
-                pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
-            ),
-            // The robot configuration
-            config,
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
-            // This will flip the path being followed to the red side of the field.
-            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
-            []() 
-            {
-                auto alliance = frc::DriverStation::GetAlliance();
-                if (alliance) 
-                    return alliance.value() == frc::DriverStation::Alliance::kRed;
-                    
-                return false;
-            },
-            // Reference to this subsystem to set requirements
-            &m_drive
-        );        
+    // This method loads the auto when it is called, however, it is recommended
+    // to first load your paths/autos when code starts, then return the
+    // pre-loaded auto/path
+    
+    return (PathPlannerAuto("Simple Auto").ToPtr().Unwrap().get());
 
-        // An example trajectory to follow.  All units in meters.
-        std::string filepath = "Simple Auto";
-        return pathplanner::PathPlannerAuto(filepath).ToPtr();
-    }
-    catch(std::exception& e) 
-    {
-        std::cout << e.what();
-    }
-}
+} 
