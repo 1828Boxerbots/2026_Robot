@@ -65,10 +65,3 @@ void MAXSwerveModule::SetDesiredState(
 }
 
 void MAXSwerveModule::ResetEncoders() { m_drivingEncoder.SetPosition(0); }
-
-
-//Stuff I added
- units::meter_t MAXSwerveModule::GetDriveEncoder()
-{
-  return units::meter_t{m_drivingEncoder.GetPosition()};
-}

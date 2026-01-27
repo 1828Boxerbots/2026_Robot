@@ -51,8 +51,6 @@ class MAXSwerveModule {
    */
   void ResetEncoders();
 
- units::meter_t GetDriveEncoder();
-
  private:
   SparkMax m_drivingSpark;
   SparkMax m_turningSpark;
