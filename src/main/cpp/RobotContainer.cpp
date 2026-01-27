@@ -22,16 +22,6 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 
-// Autononous
-#include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include <pathplanner/lib/auto/AutoBuilder.h>
-#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
-#include <frc/DriverStation.h>
-
-#include <frc/Filesystem.h>
-#include <stdexcept>
-#include <iostream>
-
 using namespace DriveConstants;
 using namespace pathplanner;
 
