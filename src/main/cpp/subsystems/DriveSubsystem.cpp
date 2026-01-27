@@ -10,7 +10,13 @@
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
+#include <pathplanner/lib/config/RobotConfig.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <frc/DriverStation.h>
+
 #include "Constants.h"
+#include <iostream>
 
 using namespace DriveConstants;
 using namespace pathplanner;
@@ -30,6 +36,7 @@ DriveSubsystem::DriveSubsystem()
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
                  frc::Pose2d{}} {
+  try {
   // Usage reporting for MAXSwerve template
   HAL_Report(HALUsageReporting::kResourceType_RobotDrive,
              HALUsageReporting::kRobotDriveSwerve_MaxSwerve);
