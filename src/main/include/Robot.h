@@ -9,6 +9,12 @@
 
 #include "RobotContainer.h"
 
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/CommandPtr.h>
+#include <frc2/command/Command.h>
+#include <memory>
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -24,7 +30,7 @@ class Robot : public frc::TimedRobot {
  private:
   // Have it null by default so that if testing teleop it
   // doesn't have undefined behavior and potentially crash.
-  std::optional<frc2::CommandPtr> m_autonomousCommand;
+  frc2::Command* m_autonomousCommand = nullptr;
 
   RobotContainer m_container;
 };
