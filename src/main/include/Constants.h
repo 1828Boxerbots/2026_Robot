@@ -98,3 +98,38 @@ namespace OIConstants {
 constexpr int kDriverControllerPort = 0;
 constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
+
+namespace IntakeConstants
+{
+    // Ports
+    inline constexpr int kIntakeMotorPort = 11;
+
+} // namespace IntakeConstants
+
+namespace ArmConstants
+{
+    // Ports
+    inline constexpr int kArmMotorPort = 12;
+
+    // Encoder Values in Rad
+    inline constexpr int kTargetStowedPosition = 0;
+    inline constexpr int kTargetPeloyedPositon = 1;
+    
+} // namespace ArmConstants
+
+namespace HopperConstants
+{
+    //  Ports
+    inline constexpr int kTowerMotorPort = 13;
+    inline constexpr int kHopperMotorPort = 14;
+
+} // namespace HopperrConstants
+
+namespace ShooterConstants
+{
+    //  Ports
+    inline constexpr int kShooterMotorAPort = 15;
+    inline constexpr int kShooterMotorBPort = 16;
+    
+} // namespace ShooterConstants
+
