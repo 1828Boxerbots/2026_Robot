@@ -8,8 +8,6 @@
 #include <frc/TimedRobot.h>
 #include <frc2/command/Command.h>
 
-#include "RobotContainer.h"
-
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandPtr.h>
