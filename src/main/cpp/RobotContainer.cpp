@@ -21,7 +21,13 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 
+// Autononous
+
+
 using namespace DriveConstants;
+using namespace pathplanner;
+
+frc::SendableChooser<frc2::Command*> autochooser;
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
@@ -44,57 +50,30 @@ RobotContainer::RobotContainer() {
             true);
       },
       {&m_drive}));
+
+   
+    frc::SmartDashboard::PutData("Auto Chooser", &autochooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
   frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kRightBumper)
+                       frc::XboxController  ::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 }
 
-frc2::Command* RobotContainer::GetAutonomousCommand() {
-  // Set up config for trajectory
-  frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
-                               AutoConstants::kMaxAcceleration);
-  // Add kinematics to ensure max speed is actually obeyed
-  config.SetKinematics(m_drive.kDriveKinematics);
+frc2::Command* RobotContainer::GetAutonomousCommand() 
+{
+    try
+    {
+       
+        return m_autochooser.GetSelected();
 
-  // An example trajectory to follow.  All units in meters.
-  auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-      // Start at the origin facing the +X direction
-      frc::Pose2d{0_m, 0_m, 0_deg},
-      // Pass through these two interior waypoints, making an 's' curve path
-      {frc::Translation2d{1_m, 1_m}, frc::Translation2d{2_m, -1_m}},
-      // End 3 meters straight ahead of where we started, facing forward
-      frc::Pose2d{3_m, 0_m, 0_deg},
-      // Pass the config
-      config);
-
-  frc::ProfiledPIDController<units::radians> thetaController{
-      AutoConstants::kPThetaController, 0, 0,
-      AutoConstants::kThetaControllerConstraints};
-
-  thetaController.EnableContinuousInput(units::radian_t{-std::numbers::pi},
-                                        units::radian_t{std::numbers::pi});
-
-  frc2::SwerveControllerCommand<4> swerveControllerCommand(
-      exampleTrajectory, [this]() { return m_drive.GetPose(); },
-
-      m_drive.kDriveKinematics,
-
-      frc::PIDController{AutoConstants::kPXController, 0, 0},
-      frc::PIDController{AutoConstants::kPYController, 0, 0}, thetaController,
-
-      [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },
-
-      {&m_drive});
-
-  // Reset odometry to the starting pose of the trajectory.
-  m_drive.ResetOdometry(exampleTrajectory.InitialPose());
-
-  // no auto
-  return new frc2::SequentialCommandGroup(
-      std::move(swerveControllerCommand),
-      frc2::InstantCommand(
-          [this]() { m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false); }, {}));
+        // An example trajectory to follow.  All units in meters.
+        // std::string filepath = "Simple Auto";
+        // return pathplanner::PathPlannerAuto(filepath).ToPtr();
+    }
+    catch(std::exception& e) 
+    {
+        std::cout << e.what();
+    }
 }
