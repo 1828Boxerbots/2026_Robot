@@ -4,7 +4,18 @@
 
 ShooterSub::ShooterSub()
 {
+    double velocityFeedForward =
+        1 / OtherConstants::kNeo2FeedForwardRps;
 
+    rev::spark::SparkMaxConfig shooterConfig{};
+    shooterConfig.closedLoop
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+        .Pid(1, 0, 0)
+        .OutputRange(-1, 1)
+        .VelocityFF(velocityFeedForward);
+
+    m_shooterMotor1.SetInverted(false);
+    m_shooterMotor2.SetInverted(true);
 }
 
 ShooterSub::~ShooterSub() {}
@@ -14,10 +25,10 @@ void ShooterSub::Periodic()
 
 }
 
-void ShooterSub::SetPower(float speed)
+void ShooterSub::SetVelocity(float velocity)
 {
-    m_shooterMotor1.Set(speed);
-    m_shooterMotor2.Set(speed);
+    m_shooterPid1.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+    m_shooterPid2.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
 }
 
 std::pair<double, double> ShooterSub::GetVelocity()

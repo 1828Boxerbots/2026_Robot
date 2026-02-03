@@ -4,7 +4,15 @@
 
 IntakeSub::IntakeSub()
 {
+    double velocityFeedForward =
+        1 / OtherConstants::kNeo2FeedForwardRps;
 
+    rev::spark::SparkMaxConfig intakeConfig{};
+    intakeConfig.closedLoop
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+        .Pid(1, 0, 0)
+        .OutputRange(-1, 1)
+        .VelocityFF(velocityFeedForward);
 }
 
 IntakeSub::~IntakeSub() {}
@@ -14,9 +22,9 @@ void IntakeSub::Periodic()
     
 }
 
-void IntakeSub::SetPower(float speed)
+void IntakeSub::SetVelocity(float velocity)
 {
-    m_intakeMotor.Set(speed);
+    m_intakePid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
 }
 
 double IntakeSub::GetVelocity()

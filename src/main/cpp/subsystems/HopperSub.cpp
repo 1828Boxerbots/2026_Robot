@@ -4,7 +4,15 @@
 
 HopperSub::HopperSub()
 {
+    double velocityFeedForward =
+        1 / OtherConstants::kNeo2FeedForwardRps;
 
+    rev::spark::SparkMaxConfig hopperConfig{};
+    hopperConfig.closedLoop
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+        .Pid(1, 0, 0)
+        .OutputRange(-1, 1)
+        .VelocityFF(velocityFeedForward);
 }
 
 HopperSub::~HopperSub() {}
@@ -14,10 +22,10 @@ void HopperSub::Periodic()
     
 }
 
-void HopperSub::SetPower(float speed)
+void HopperSub::SetVelocity(float velocity)
 {
-    m_towerMotor.Set(speed);
-    m_hopperMotor.Set(speed);
+    m_towerPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+    m_hopperPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
 }
 
 std::pair<double, double> HopperSub::GetVelocity()

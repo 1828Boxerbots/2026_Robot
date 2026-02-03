@@ -133,3 +133,8 @@ namespace ShooterConstants
     
 } // namespace ShooterConstants
 
+namespace OtherConstants
+{
+    inline constexpr double kNeo2FeedForwardRps = 5676.0 / 60;
+    
+} // namespce OtherConstants

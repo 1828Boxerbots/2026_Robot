@@ -3,9 +3,10 @@
 #include "Constants.h"
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/CommandPtr.h>
-#include <frc2/command/StartEndCommand.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/SparkMax.h>
+#include <rev/config/SparkMaxConfig.h>
+#include <rev/SparkClosedLoopController.h>
 
 class IntakeSub : public frc2::SubsystemBase {
  public:
@@ -14,7 +15,7 @@ class IntakeSub : public frc2::SubsystemBase {
 
   void Periodic() override;
 
-  void SetPower(float speed);
+  void SetVelocity(float velocity);
 
   double GetVelocity();
 
@@ -23,4 +24,5 @@ class IntakeSub : public frc2::SubsystemBase {
 
   rev::spark::SparkRelativeEncoder m_intakeEncoder = m_intakeMotor.GetEncoder();
 
+  rev::spark::SparkClosedLoopController m_intakePid = m_intakeMotor.GetClosedLoopController();
 };

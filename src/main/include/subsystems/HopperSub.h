@@ -3,9 +3,10 @@
 #include "Constants.h"
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/CommandPtr.h>
-#include <frc2/command/StartEndCommand.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/SparkMax.h>
+#include <rev/config/SparkMaxConfig.h>
+#include <rev/SparkClosedLoopController.h>
 
 class HopperSub : public frc2::SubsystemBase {
  public:
@@ -14,7 +15,7 @@ class HopperSub : public frc2::SubsystemBase {
 
   void Periodic() override;
 
-  void SetPower(float speed);
+  void SetVelocity(float velocity);
 
   std::pair<double, double> GetVelocity();
 
@@ -24,4 +25,7 @@ class HopperSub : public frc2::SubsystemBase {
 
   rev::spark::SparkRelativeEncoder m_towerEncoder = m_towerMotor.GetEncoder();
   rev::spark::SparkRelativeEncoder m_hopperEncoder = m_hopperMotor.GetEncoder();
+  
+  rev::spark::SparkClosedLoopController m_towerPid = m_towerMotor.GetClosedLoopController();
+  rev::spark::SparkClosedLoopController m_hopperPid = m_hopperMotor.GetClosedLoopController();
 };
