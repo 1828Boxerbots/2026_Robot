@@ -112,8 +112,8 @@ namespace ArmConstants
     inline constexpr int kArmMotorPort = 12;
 
     // Encoder Values in Rad
-    inline constexpr int kTargetStowedPosition = 0;
-    inline constexpr int kTargetPeloyedPositon = 1;
+    inline constexpr int kStowedPosition = 0;
+    inline constexpr int kDeloyedPositon = 1;
     
 } // namespace ArmConstants
 

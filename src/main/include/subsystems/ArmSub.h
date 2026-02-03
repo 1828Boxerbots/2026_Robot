@@ -7,6 +7,7 @@
 #include <frc2/command/FunctionalCommand.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/SparkMax.h>
+#include <rev/config/SparkMaxConfig.h>
 
 class ArmSub : public frc2::SubsystemBase {
  public:
