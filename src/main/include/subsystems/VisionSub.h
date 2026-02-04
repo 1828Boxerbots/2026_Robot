@@ -15,6 +15,12 @@ class VisionSub : public frc2::SubsystemBase {
   VisionSub();
   ~VisionSub();
 
+  void RunCharucoBoardCailbration();
+
+  void RunAprilTagDetection();
+
+  void VisionThread();
+
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
