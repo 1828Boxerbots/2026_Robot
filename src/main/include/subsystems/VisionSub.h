@@ -10,16 +10,22 @@
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <opencv2/opencv.hpp>
 
+struct  AprilTagData
+  {
+    // value is in meters
+    double distance;
+  };
+
 class VisionSub : public frc2::SubsystemBase {
  public:
   VisionSub();
   ~VisionSub();
 
-  void RunCharucoBoardCailbration();
+  static void RunCharucoBoardCailbration();
 
-  void RunAprilTagDetection();
+  static void RunAprilTagDetection();
 
-  void VisionThread();
+  static void VisionThread();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -30,31 +36,5 @@ class VisionSub : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  bool m_runCalibration;
-  int m_squareNumX;
-  int m_squareNumY;
-  float m_squareLength;
-  float m_markerLength;
-  cv::Mat m_board;
-  std::vector<cv::Mat> m_allCharucoCorners, m_allCharucoIds;
-  std::vector<std::vector<cv::Point2f>> m_allImagePoints;
-  std::vector<std::vector<cv::Point3f>> m_allObjectPoints;
-  std::vector<cv::Mat> m_allImages;
-  cv::Size m_imageSize;
-  cv::Mat m_feed;
-  cv::Mat m_distCoeffs, m_cameraMatrix;
-  float m_markerSize;
-  cv::Mat m_grayFeed;
-  cv::Mat m_edgeFeed;
-  int m_lightThreshold;
-  int m_darkThreshold;
-  cv::Mat m_posFeed;
-  cv::aruco::CharucoBoard m_charucoBoard;
-  struct  AprilTagData
-  {
-    // value is in meters
-    double distance;
-  };
-
-  std::map<unsigned int, AprilTagData> m_tagData;
+  static std::map<unsigned int, AprilTagData> m_tagData;
 };
