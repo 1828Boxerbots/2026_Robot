@@ -51,7 +51,7 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 
-   
+   // In main branch, no smardashboard call. Most likely not the error though
     frc::SmartDashboard::PutData("Auto Chooser", &m_autochooser);
 }
 
@@ -65,6 +65,7 @@ frc2::Command* RobotContainer::GetAutonomousCommand()
 {
     try
     {
+        //In main branch: Swerve drive auto. Shouldnt need though.
        
         return m_autochooser.GetSelected();
 

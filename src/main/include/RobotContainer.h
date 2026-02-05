@@ -55,6 +55,8 @@ class RobotContainer {
 
 
   // The chooser for the autonomous routines
+
+  //DEBUG:  In main branch, Line 40: just m_chooser with same type, but not set equal to anything
     frc::SendableChooser<frc2::Command*> m_autochooser = pathplanner::AutoBuilder::buildAutoChooser(); 
   void ConfigureButtonBindings();
 };
