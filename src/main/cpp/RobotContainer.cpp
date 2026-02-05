@@ -27,7 +27,7 @@
 using namespace DriveConstants;
 using namespace pathplanner;
 
-frc::SendableChooser<frc2::Command*> autochooser;
+
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
@@ -52,7 +52,7 @@ RobotContainer::RobotContainer() {
       {&m_drive}));
 
    
-    frc::SmartDashboard::PutData("Auto Chooser", &autochooser);
+    frc::SmartDashboard::PutData("Auto Chooser", &m_autochooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
