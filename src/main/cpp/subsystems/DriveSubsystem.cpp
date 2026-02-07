@@ -10,9 +10,8 @@
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
-#include <pathplanner/lib/config/RobotConfig.h>
-#include <pathplanner/lib/auto/AutoBuilder.h>
-#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+
+
 #include <frc/DriverStation.h>
 
 #include "Constants.h"
@@ -143,4 +142,34 @@ frc::ChassisSpeeds DriveSubsystem::GetRelativeChassisSpeeds()
     m_rearLeft.GetState(),
     m_rearRight.GetState()
   ); 
+}
+
+ std::shared_ptr<pathplanner::PathPlannerPath> DriveSubsystem::OnTheFlyPathOne()
+{
+
+// Create a vector of waypoints from poses. Each pose represents one waypoint.
+// The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+std::vector<frc::Pose2d> poses{
+    frc::Pose2d(1.0_m, 1.0_m, frc::Rotation2d(0_deg)),
+    frc::Pose2d(3.0_m, 1.0_m, frc::Rotation2d(0_deg)),
+    frc::Pose2d(5.0_m, 3.0_m, frc::Rotation2d(90_deg))
+};
+std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
+
+pathplanner::PathConstraints constraints(3.0_mps, 3.0_mps_sq, 360_deg_per_s, 720_deg_per_s_sq); // The constraints for this path.
+// PathConstraints constraints = PathConstraints::unlimitedConstraints(12_V); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
+
+// Create the path using the waypoints created above
+// We make a shared pointer here since the path following commands require a shared pointer
+auto path = std::make_shared<pathplanner::PathPlannerPath>(
+    waypoints,
+    constraints,
+    std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
+    pathplanner::GoalEndState(0.0_mps, frc::Rotation2d(-90_deg)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+);
+
+// Prevent the path from being flipped if the coordinates are already correct
+path->preventFlipping = true;
+
+return path;
 }
