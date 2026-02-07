@@ -16,11 +16,6 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
-#include "subsystems/HopperSub.h"
-#include "subsystems/IntakeSub.h"
-#include "subsystems/LowerClimbSub.h"
-#include "subsystems/UpperClimbSub.h"
-#include "subsystems/ShooterSub.h"
 #include "subsystems/VisionSub.h"
 
 
