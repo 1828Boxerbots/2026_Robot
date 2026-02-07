@@ -15,6 +15,8 @@
 
 #include "Constants.h"
 #include "MAXSwerveModule.h"
+#include <frc/smartdashboard/SmartDashboard.h>
+
 
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
@@ -100,8 +102,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
       frc::Translation2d{-DriveConstants::kWheelBase / 2,
                          -DriveConstants::kTrackWidth / 2}};
 
-  
-frc::ChassisSpeeds GetRelativeChassisSpeeds();                       
+    frc::ChassisSpeeds GetRelativeChassisSpeeds();
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.

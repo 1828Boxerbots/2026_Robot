@@ -18,18 +18,6 @@
 #include "subsystems/DriveSubsystem.h"
 
 
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <frc2/command/CommandPtr.h>
-#include <memory>
-
-#include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include <pathplanner/lib/auto/AutoBuilder.h>
-#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
-#include <frc/DriverStation.h>
-
-#include <frc/Filesystem.h>
-#include <stdexcept>
-#include <iostream>
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -42,7 +30,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::Command* GetAutonomousCommand();
+  frc2::CommandPtr GetAutonomousCommand();
 
  private:
   // The driver's controller
@@ -55,8 +43,7 @@ class RobotContainer {
 
 
   // The chooser for the autonomous routines
+  frc::SendableChooser<frc2::Command*> m_chooser;
 
-  //DEBUG:  In main branch, Line 40: just m_chooser with same type, but not set equal to anything
-    frc::SendableChooser<frc2::Command*> m_autochooser = pathplanner::AutoBuilder::buildAutoChooser(); 
   void ConfigureButtonBindings();
 };

@@ -35,8 +35,6 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-
-  // In main: same thing
   m_autonomousCommand = m_container.GetAutonomousCommand();
 
   if (m_autonomousCommand) 
@@ -52,11 +50,8 @@ void Robot::TeleopInit() {
   // teleop starts running. If you want the autonomous to
   // continue until interrupted by another command, remove
   // this line or comment it out.
-
-  //In main: Didnt include '!=' nullptr in if condition. This MIGHT be the problem somehow
-  if (m_autonomousCommand != nullptr) {
+  if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
-    m_autonomousCommand = nullptr;
   }
 }
 
