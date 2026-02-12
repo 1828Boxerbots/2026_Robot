@@ -13,6 +13,8 @@ ArmSub::ArmSub()
         .OutputRange(-1, 1)
         .VelocityFF(velocityFeedForward);
 
+    m_armMotor1.SetInverted(false);
+    m_armMotor2.SetInverted(true);
 }
 
 ArmSub::~ArmSub() {}
@@ -22,12 +24,15 @@ void ArmSub::Periodic()
     
 }
 
-double ArmSub::GetPos()
+std::pair<double, double> ArmSub::GetPos()
 {
-    return m_absArmEncoder.GetPosition();
+    double encoderValue1 = m_absArmEncoder1.GetPosition();
+    double encoderValue2 = m_absArmEncoder2.GetPosition();
+    return std::pair<double, double> (encoderValue1, encoderValue2);
 }
 
 void ArmSub::SetPos(float pos)
 {
-    m_armPid.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
+    m_armPid1.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
+    m_armPid2.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
 }

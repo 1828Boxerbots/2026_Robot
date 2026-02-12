@@ -5,11 +5,11 @@
 
 #include "subsystems/ArmSub.h"
 
-class StowIntakeCmd : public frc2::CommandHelper<frc2::Command, StowIntakeCmd> 
+class ArmCmd : public frc2::CommandHelper<frc2::Command, ArmCmd> 
 {
-  
+
  public:
-  StowIntakeCmd(ArmSub *m_subsystem);
+  ArmCmd(ArmSub *m_subsystem);
 
   void Initialize() override;
 

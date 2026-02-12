@@ -109,7 +109,8 @@ namespace IntakeConstants
 namespace ArmConstants
 {
     // Ports
-    inline constexpr int kArmMotorPort = 12;
+    inline constexpr int kArmMotorAPort = 12;
+    inline constexpr int kArmMotorBPort = 13;
 
     // Encoder Values in Rad
     inline constexpr int kStowedPosition = 0;
@@ -117,13 +118,12 @@ namespace ArmConstants
     
 } // namespace ArmConstants
 
-namespace HopperConstants
+namespace TowerConstants
 {
     //  Ports
-    inline constexpr int kTowerMotorPort = 13;
-    inline constexpr int kHopperMotorPort = 14;
+    inline constexpr int kTowerMotorPort = 14;
 
-} // namespace HopperrConstants
+} // namespace TowerConstants
 
 namespace ShooterConstants
 {

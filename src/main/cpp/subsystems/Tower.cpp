@@ -1,8 +1,8 @@
 
-#include "subsystems/HopperSub.h"
+#include "subsystems/TowerSub.h"
 
 
-HopperSub::HopperSub()
+TowerSub::TowerSub()
 {
     double velocityFeedForward =
         1 / OtherConstants::kNeo2FeedForwardRps;
@@ -15,23 +15,21 @@ HopperSub::HopperSub()
         .VelocityFF(velocityFeedForward);
 }
 
-HopperSub::~HopperSub() {}
+TowerSub::~TowerSub() {}
 
-void HopperSub::Periodic()
+void TowerSub::Periodic()
 {
     
 }
 
-void HopperSub::SetVelocity(float velocity)
+void TowerSub::SetVelocity(float velocity)
 {
     m_towerPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
-    m_hopperPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
 }
 
-std::pair<double, double> HopperSub::GetVelocity()
+double TowerSub::GetVelocity()
 {
     double towerVelocity = m_towerEncoder.GetVelocity();
-    double hopperVelocity = m_towerEncoder.GetVelocity();
 
-    return std::pair<double, double> (towerVelocity,hopperVelocity);
+    return towerVelocity;
 }

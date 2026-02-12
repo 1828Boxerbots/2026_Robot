@@ -15,14 +15,17 @@ class ArmSub : public frc2::SubsystemBase {
 
   void Periodic() override;
 
-  double GetPos();
+  std::pair<double, double> GetPos();
 
   void SetPos(float pos);
 
  private:
-  rev::spark::SparkMax m_armMotor{ArmConstants::kArmMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_armMotor1{ArmConstants::kArmMotorAPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_armMotor2{ArmConstants::kArmMotorBPort, rev::spark::SparkMax::MotorType::kBrushless};
 
-  rev::spark::SparkAbsoluteEncoder m_absArmEncoder = m_armMotor.GetAbsoluteEncoder();
+  rev::spark::SparkAbsoluteEncoder m_absArmEncoder1 = m_armMotor1.GetAbsoluteEncoder();
+  rev::spark::SparkAbsoluteEncoder m_absArmEncoder2 = m_armMotor2.GetAbsoluteEncoder();
 
-  rev::spark::SparkClosedLoopController m_armPid = m_armMotor.GetClosedLoopController();
+  rev::spark::SparkClosedLoopController m_armPid1 = m_armMotor1.GetClosedLoopController();
+  rev::spark::SparkClosedLoopController m_armPid2 = m_armMotor2.GetClosedLoopController();
 };

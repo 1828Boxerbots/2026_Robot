@@ -31,3 +31,8 @@ double IntakeSub::GetVelocity()
 {
     return m_intakeEncoder.GetVelocity();
 }
+
+void IntakeSub::Set(float power)
+{
+    m_intakeMotor.Set(power);
+}

@@ -18,7 +18,7 @@
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/IntakeSub.h"
 #include "subsystems/ArmSub.h"
-#include "subsystems/HopperSub.h"
+#include "subsystems/TowerSub.h"
 #include "subsystems/ShooterSub.h"
 
 /**
@@ -44,7 +44,7 @@ class RobotContainer {
   DriveSubsystem m_drive;
   IntakeSub m_intake;
   ArmSub m_arm;
-  HopperSub m_hopper;
+  TowerSub tower;
   ShooterSub m_shooter;
 
   // The chooser for the autonomous routines
