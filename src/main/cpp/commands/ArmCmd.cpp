@@ -13,17 +13,20 @@ ArmCmd::ArmCmd(ArmSub *subsystem)
 
 void ArmCmd::Initialize()
 {
+  m_subsystem->SetPos(m_targetPosition);
+
   m_isFinished = false;
 }
 
 void ArmCmd::Execute()
 {
-    
+  m_isFinished = (CompareDoubles(m_subsystem->GetPos1(), m_targetPosition, ArmConstants::kPositionTolerance)
+    && CompareDoubles(m_subsystem->GetPos2(), m_targetPosition, ArmConstants::kPositionTolerance));
 }
 
 void ArmCmd::End(bool interupted)
 {
-
+  // m_subsystem.
 }
 
 bool ArmCmd::IsFinished()

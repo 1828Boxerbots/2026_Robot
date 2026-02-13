@@ -115,6 +115,9 @@ namespace ArmConstants
     // Encoder Values in Rad
     inline constexpr int kStowedPosition = 0;
     inline constexpr int kDeloyedPositon = 1;
+
+    // Other Konstants
+    inline constexpr double kPositionTolerance = 20.0;
     
 } // namespace ArmConstants
 

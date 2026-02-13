@@ -15,7 +15,8 @@ class ArmSub : public frc2::SubsystemBase {
 
   void Periodic() override;
 
-  std::pair<double, double> GetPos();
+  double GetPos1();
+  double GetPos2();
 
   void SetPos(float pos);
 

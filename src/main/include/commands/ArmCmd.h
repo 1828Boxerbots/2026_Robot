@@ -4,6 +4,8 @@
 #include <frc2/command/CommandHelper.h>
 
 #include "subsystems/ArmSub.h"
+#include "Constants.h"
+#include "Util.h"
 
 class ArmCmd : public frc2::CommandHelper<frc2::Command, ArmCmd> 
 {
@@ -22,5 +24,6 @@ class ArmCmd : public frc2::CommandHelper<frc2::Command, ArmCmd>
  private:
   ArmSub *m_subsystem = nullptr; 
 
-  bool m_isFinished = false;
+  bool m_isFinished;
+  double m_targetPosition;
 };
