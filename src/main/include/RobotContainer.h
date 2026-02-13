@@ -44,7 +44,7 @@ class RobotContainer {
   DriveSubsystem m_drive;
   IntakeSub m_intake;
   ArmSub m_arm;
-  TowerSub tower;
+  TowerSub m_tower;
   ShooterSub m_shooter;
 
   // The chooser for the autonomous routines
