@@ -5,15 +5,16 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <iostream>
 
-ShootCmd::ShootCmd(ShooterSub *subsystem)
+ShootCmd::ShootCmd(ShooterSub *subsystem, double speed)
 {
     m_subsystem = subsystem;
+    m_speed = speed;
     AddRequirements(m_subsystem);
 }
 
 void ShootCmd::Initialize()
 {
-  m_isFinished = false;
+  m_subsystem->SetVelocity(m_speed);
 }
 
 void ShootCmd::Execute()
@@ -28,5 +29,5 @@ void ShootCmd::End(bool interupted)
 
 bool ShootCmd::IsFinished()
 {
-    return m_isFinished;
+    return false;
 }
