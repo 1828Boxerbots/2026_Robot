@@ -9,7 +9,7 @@ class LoadCmd : public frc2::CommandHelper<frc2::Command, LoadCmd>
 {
 
  public:
-  LoadCmd(IntakeSub *m_subsystem);
+  LoadCmd(IntakeSub *m_subsystem, double speed);
 
   void Initialize() override;
 
@@ -21,6 +21,6 @@ class LoadCmd : public frc2::CommandHelper<frc2::Command, LoadCmd>
 
  private:
   IntakeSub *m_subsystem = nullptr; 
-
+  double m_speed = 0;
   bool m_isFinished = false;
 };
