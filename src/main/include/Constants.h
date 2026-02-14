@@ -104,6 +104,11 @@ namespace IntakeConstants
     // Ports
     inline constexpr int kIntakeMotorPort = 11;
 
+    // Speeds
+    
+     inline constexpr int kIntakeVelocity = 1;
+
+
 } // namespace IntakeConstants
 
 namespace ArmConstants
