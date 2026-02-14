@@ -11,7 +11,7 @@ class ArmCmd : public frc2::CommandHelper<frc2::Command, ArmCmd>
 {
 
  public:
-  ArmCmd(ArmSub *m_subsystem);
+  ArmCmd(ArmSub *m_subsystem, double pos);
 
   void Initialize() override;
 

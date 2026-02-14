@@ -18,7 +18,7 @@ class ArmSub : public frc2::SubsystemBase {
   double GetPos1();
   double GetPos2();
 
-  void SetPos(float pos);
+  void SetPos(double pos);
 
  private:
   rev::spark::SparkMax m_armMotor1{ArmConstants::kArmMotorAPort, rev::spark::SparkMax::MotorType::kBrushless};

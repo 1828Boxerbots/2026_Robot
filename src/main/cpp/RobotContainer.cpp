@@ -21,8 +21,6 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 
-#include "commands/ArmCmd.h"
-
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
@@ -49,10 +47,9 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kRightBumper)
+  frc2::JoystickButton(&m_driverController,
+                       frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
-
-    // m_driverController.B().
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

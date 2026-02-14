@@ -30,7 +30,7 @@ double ArmSub::GetPos2()
     return double (m_absArmEncoder2.GetPosition());
 }
 
-void ArmSub::SetPos(float pos)
+void ArmSub::SetPos(double pos)
 {
     m_armPid1.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
     m_armPid2.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);

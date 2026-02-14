@@ -5,10 +5,12 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <iostream>
 
-ArmCmd::ArmCmd(ArmSub *subsystem)
+ArmCmd::ArmCmd(ArmSub *subsystem, double pos)
 {
-    m_subsystem = subsystem;
-    AddRequirements(m_subsystem);
+  m_subsystem = subsystem;
+  AddRequirements(m_subsystem);
+  
+  m_targetPosition = pos;
 }
 
 void ArmCmd::Initialize()
