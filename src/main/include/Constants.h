@@ -106,7 +106,7 @@ namespace IntakeConstants
 
     // Speeds
     
-     inline constexpr int kIntakeVelocity = 1;
+     inline constexpr int kVelocity = 1;
 
 
 } // namespace IntakeConstants
@@ -123,13 +123,16 @@ namespace ArmConstants
 
     // Other Konstants
     inline constexpr double kPositionTolerance = 20.0;
-    
+
 } // namespace ArmConstants
 
 namespace TowerConstants
 {
     //  Ports
     inline constexpr int kTowerMotorPort = 14;
+    
+    // Other Knostants
+    inline constexpr double kVelocity = 3.0;
 
 } // namespace TowerConstants
 
@@ -138,6 +141,9 @@ namespace ShooterConstants
     //  Ports
     inline constexpr int kShooterMotorAPort = 15;
     inline constexpr int kShooterMotorBPort = 16;
+    
+    // Other Knostants
+    inline constexpr double kVelocity = 3.0;
     
 } // namespace ShooterConstants
 

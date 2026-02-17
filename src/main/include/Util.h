@@ -1,6 +1,6 @@
 #pragma once
 
-bool CompareDoubles(double input, double targetValue, double tolerance)
+inline bool CompareDoubles(double input, double targetValue, double tolerance)
 {
     if ((input < (targetValue + tolerance)) && (input > (targetValue - tolerance)))
     {

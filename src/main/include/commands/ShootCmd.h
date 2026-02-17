@@ -4,11 +4,12 @@
 #include <frc2/command/CommandHelper.h>
 
 #include "subsystems/ShooterSub.h"
+#include "subsystems/TowerSub.h"
 
 class ShootCmd : public frc2::CommandHelper<frc2::Command, ShootCmd> 
 {
  public:
-  ShootCmd(ShooterSub *m_subsystem, double speed);
+  ShootCmd(ShooterSub *shootSubsystem, TowerSub *towerSubsystem, double shootSpeed,  double towerSpeed);
 
   void Initialize() override;
 
@@ -19,7 +20,9 @@ class ShootCmd : public frc2::CommandHelper<frc2::Command, ShootCmd>
   bool IsFinished() override;
 
  private:
-  ShooterSub *m_subsystem = nullptr; 
-  double m_speed = 0;
+  ShooterSub *m_shootSubsystem = nullptr; 
+  TowerSub *m_towerSubsystem = nullptr; 
+  double m_shootSpeed = 0;
+  double m_towerSpeed = 0;
   bool m_isFinished = false;
 };

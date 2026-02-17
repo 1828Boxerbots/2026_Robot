@@ -20,6 +20,9 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
+#include "commands/ArmCmd.h"
+#include "commands/LoadCmd.h"
+#include "commands/ShootCmd.h"
 
 using namespace DriveConstants;
 
@@ -47,9 +50,32 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kRightBumper)
-      .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
+//   frc2::JoystickButton(&m_driverController,
+//                        frc::XboxController::Button::kRightBumper)
+//       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
+
+    m_driverController.RightBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.SetX(); }, {&m_drive}));
+
+    // Arm Deploy
+    m_driverController.A().OnTrue(ArmCmd(&m_arm, ArmConstants::kDeloyedPositon).ToPtr());
+    // Arm Stow
+    m_driverController.B().OnTrue(ArmCmd(&m_arm, ArmConstants::kStowedPosition).ToPtr());
+
+    // Shoot
+    (!m_driverController.LeftBumper()
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kVelocity, TowerConstants::kVelocity).ToPtr());
+    // Shoot Reverse
+    (m_driverController.LeftBumper()
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kVelocity, -TowerConstants::kVelocity).ToPtr());
+
+    // Intake
+    (!m_driverController.LeftBumper()
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kVelocity).ToPtr());
+
+    // Intake Reverse
+    (m_driverController.LeftBumper()
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kVelocity).ToPtr());
+
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
