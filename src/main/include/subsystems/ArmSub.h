@@ -18,7 +18,7 @@ class ArmSub : public frc2::SubsystemBase {
 
   void Periodic() override;
 
-  void SimulationPeriodic();
+  void SimulationPeriodic() override;
 
   double GetPos1();
   double GetPos2();

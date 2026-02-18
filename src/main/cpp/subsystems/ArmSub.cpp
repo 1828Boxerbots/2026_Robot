@@ -1,10 +1,11 @@
 
 #include "subsystems/ArmSub.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <iostream>
 
 ArmSub::ArmSub()
 {
-    frc::SmartDashboard::PutNumber("simPositionInout", 0.0);
+    // frc::SmartDashboard::PutNumber("simPositionInput", 0.0);
 
     rev::spark::SparkMaxConfig armConfig{};
     armConfig.closedLoop
@@ -25,9 +26,10 @@ void ArmSub::Periodic()
 
 void ArmSub::SimulationPeriodic()
 {
-    double position = frc::SmartDashboard::GetNumber("simPositionInput", 0.0);
-    m_absArmEncoderSim1.SetPosition(position);
-    frc::SmartDashboard::PutNumber("simPositonOutput", m_absArmEncoderSim1.GetPosition());
+    // double position = frc::SmartDashboard::GetNumber("simPositionInput", 0.0);
+    // frc::SmartDashboard::PutNumber("simCheck", position);
+    // m_armMotorSim1.SetPosition(position); 
+    // frc::SmartDashboard::PutNumber("simPositonOutput", m_armMotorSim1.GetPosition());
 }
 
 double ArmSub::GetPos1()
