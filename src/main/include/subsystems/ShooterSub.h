@@ -28,4 +28,6 @@ class ShooterSub : public frc2::SubsystemBase {
 
   rev::spark::SparkClosedLoopController m_shooterPid1 = m_shooterMotor1.GetClosedLoopController();
   rev::spark::SparkClosedLoopController m_shooterPid2 = m_shooterMotor2.GetClosedLoopController();
+
+  double m_conversionFactor;
 };

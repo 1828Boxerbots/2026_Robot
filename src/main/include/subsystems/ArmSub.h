@@ -9,7 +9,6 @@
 #include <rev/SparkClosedLoopController.h>
 #include <rev/sim/SparkMaxSim.h>
 #include <rev/sim/SparkAbsoluteEncoderSim.h>
-#include <frc/simulation/SingleJointedArmSim.h>
 
 class ArmSub : public frc2::SubsystemBase {
  public:
@@ -34,6 +33,8 @@ class ArmSub : public frc2::SubsystemBase {
 
   rev::spark::SparkClosedLoopController m_armPid1 = m_armMotor1.GetClosedLoopController();
   rev::spark::SparkClosedLoopController m_armPid2 = m_armMotor2.GetClosedLoopController();
+
+  double m_rotationFactor;
 
   // Simulation
   frc::DCMotor m_gearbox = frc::DCMotor::NEO(1);

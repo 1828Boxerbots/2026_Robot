@@ -23,4 +23,6 @@ class TowerSub : public frc2::SubsystemBase {
   rev::spark::SparkMax m_towerMotor{TowerConstants::kTowerMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
   rev::spark::SparkRelativeEncoder m_towerEncoder = m_towerMotor.GetEncoder();
   rev::spark::SparkClosedLoopController m_towerPid = m_towerMotor.GetClosedLoopController();
+
+  double m_conversionFactor;
 };

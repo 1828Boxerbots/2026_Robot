@@ -29,4 +29,6 @@ class IntakeSub : public frc2::SubsystemBase {
     rev::spark::SparkMax m_intakeMotor{IntakeConstants::kIntakeMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
     rev::spark::SparkRelativeEncoder m_intakeEncoder = m_intakeMotor.GetEncoder();
     rev::spark::SparkClosedLoopController m_intakePid = m_intakeMotor.GetClosedLoopController();
+
+    double m_conversionFactor;
 };
