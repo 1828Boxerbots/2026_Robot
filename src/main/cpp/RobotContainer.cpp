@@ -61,7 +61,6 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-    m_driverController.B().OnTrue(m_drive.OnTheFlyPathOne())
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() 
