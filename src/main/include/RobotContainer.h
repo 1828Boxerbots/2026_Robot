@@ -21,6 +21,8 @@
 #include "subsystems/TowerSub.h"
 #include "subsystems/ShooterSub.h"
 
+
+
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -32,7 +34,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::Command* GetAutonomousCommand();
+  frc2::CommandPtr GetAutonomousCommand();
 
  private:
   // The driver's controller
@@ -46,6 +48,7 @@ class RobotContainer {
   ArmSub m_arm;
   TowerSub  m_tower;
   ShooterSub m_shooter;
+
 
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;

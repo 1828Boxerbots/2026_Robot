@@ -24,6 +24,16 @@
 #include "commands/LoadCmd.h"
 #include "commands/ShootCmd.h"
 
+// Autononous
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <frc/DriverStation.h>
+
+#include <frc/Filesystem.h>
+#include <stdexcept>
+#include <iostream>
+
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
@@ -103,24 +113,69 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
   thetaController.EnableContinuousInput(units::radian_t{-std::numbers::pi},
                                         units::radian_t{std::numbers::pi});
 
-  frc2::SwerveControllerCommand<4> swerveControllerCommand(
-      exampleTrajectory, [this]() { return m_drive.GetPose(); },
+}
 
-      m_drive.kDriveKinematics,
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() 
+{
+    try
+    {
+        pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
 
-      frc::PIDController{AutoConstants::kPXController, 0, 0},
-      frc::PIDController{AutoConstants::kPYController, 0, 0}, thetaController,
+        // Configure the AutoBuilder last
+        pathplanner::AutoBuilder::configure(
+            // Robot pose supplier  
+            [this]()
+            {
+                return m_drive.GetPose();
+            },
+            // Method to reset odometry (will be called if your auto has a starting pose)
+            [this](const frc::Pose2d& pose)
+            { 
+                m_drive.ResetOdometry(pose); 
+            },
+            // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            [this]()
+            {
+                return m_drive.GetRelativeChassisSpeeds();
+            },
+            // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            [this](const frc::ChassisSpeeds& speeds)
+            { 
+                units::meters_per_second_t xSpeed = speeds.vx;
+                units::meters_per_second_t ySpeed = speeds.vy;
+                units::radians_per_second_t rot = speeds.omega;
 
-      [this](auto moduleStates) { m_drive.SetModuleStates(moduleStates); },
+                m_drive.Drive(xSpeed, ySpeed, rot, false); 
+            },
+            // PPHolonomicController is the built in path following controller for holonomic drive trains
+            std::make_shared<pathplanner::PPHolonomicDriveController>
+            ( 
+                pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
+                pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
+            ),
+            // The robot configuration
+            config,
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
+            []() 
+            {
+                auto alliance = frc::DriverStation::GetAlliance();
+                if (alliance) 
+                    return alliance.value() == frc::DriverStation::Alliance::kRed;
+                    
+                return false;
+            },
+            // Reference to this subsystem to set requirements
+            &m_drive
+        );        
 
-      {&m_drive});
-
-  // Reset odometry to the starting pose of the trajectory.
-  m_drive.ResetOdometry(exampleTrajectory.InitialPose());
-
-  // no auto
-  return new frc2::SequentialCommandGroup(
-      std::move(swerveControllerCommand),
-      frc2::InstantCommand(
-          [this]() { m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false); }, {}));
+        // An example trajectory to follow.  All units in meters.
+        std::string filepath = "Simple Auto";
+        return pathplanner::PathPlannerAuto(filepath).ToPtr();
+    }
+    catch(std::exception& e) 
+    {
+        std::cout << e.what();
+    }
 }
