@@ -20,6 +20,9 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
+#include "commands/ArmCmd.h"
+#include "commands/LoadCmd.h"
+#include "commands/ShootCmd.h"
 
 // Autononous
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
@@ -57,9 +60,58 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kRightBumper)
-      .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
+//   frc2::JoystickButton(&m_driverController,
+//                        frc::XboxController::Button::kRightBumper)
+//       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
+
+    m_driverController.RightBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.SetX(); }, {&m_drive}));
+
+    // Arm Deploy
+    m_driverController.A().OnTrue(ArmCmd(&m_arm, ArmConstants::kDeloyedPositon).ToPtr());
+    // Arm Stow
+    m_driverController.B().OnTrue(ArmCmd(&m_arm, ArmConstants::kStowedPosition).ToPtr());
+
+    // Shoot
+    (!m_driverController.LeftBumper()
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kVelocity, TowerConstants::kVelocity).ToPtr());
+    // Shoot Reverse
+    (m_driverController.LeftBumper()
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kVelocity, -TowerConstants::kVelocity).ToPtr());
+
+    // Intake
+    (!m_driverController.LeftBumper()
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kVelocity).ToPtr());
+
+    // Intake Reverse
+    (m_driverController.LeftBumper()
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kVelocity).ToPtr());
+
+}
+
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+  // Set up config for trajectory
+  frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
+                               AutoConstants::kMaxAcceleration);
+  // Add kinematics to ensure max speed is actually obeyed
+  config.SetKinematics(m_drive.kDriveKinematics);
+
+  // An example trajectory to follow.  All units in meters.
+  auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+      // Start at the origin facing the +X direction
+      frc::Pose2d{0_m, 0_m, 0_deg},
+      // Pass through these two interior waypoints, making an 's' curve path
+      {frc::Translation2d{1_m, 1_m}, frc::Translation2d{2_m, -1_m}},
+      // End 3 meters straight ahead of where we started, facing forward
+      frc::Pose2d{3_m, 0_m, 0_deg},
+      // Pass the config
+      config);
+
+  frc::ProfiledPIDController<units::radians> thetaController{
+      AutoConstants::kPThetaController, 0, 0,
+      AutoConstants::kThetaControllerConstraints};
+
+  thetaController.EnableContinuousInput(units::radian_t{-std::numbers::pi},
+                                        units::radian_t{std::numbers::pi});
 
 }
 
