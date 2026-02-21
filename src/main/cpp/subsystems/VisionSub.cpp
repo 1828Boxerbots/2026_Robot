@@ -14,6 +14,7 @@
 #include <cscore_cv.h>
 
 std::map<unsigned int, AprilTagData> VisionSub::m_tagData;
+double VisionSub::m_translationValue;
 
 VisionSub::VisionSub()
 {
@@ -44,6 +45,11 @@ void VisionSub::VisionThread()
     {
     RunCharucoBoardCailbration();
     }
+}
+
+double VisionSub::GetTagTranslation()
+{
+    return m_translationValue;
 }
 
 void VisionSub::RunAprilTagDetection()
@@ -119,6 +125,11 @@ void VisionSub::RunAprilTagDetection()
                     
                     cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
                     cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
+
+                    if((markerIds[i] == 26) || (markerIds[i] == 10))
+                    {
+                        m_translationValue = tvecs[i](0);
+                    }
                 }
             }
             

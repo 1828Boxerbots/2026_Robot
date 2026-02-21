@@ -27,6 +27,8 @@ class VisionSub : public frc2::SubsystemBase {
 
   static void VisionThread();
 
+  double GetTagTranslation();
+
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
@@ -37,4 +39,6 @@ class VisionSub : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
 
   static std::map<unsigned int, AprilTagData> m_tagData;
+
+  static double m_translationValue;
 };
