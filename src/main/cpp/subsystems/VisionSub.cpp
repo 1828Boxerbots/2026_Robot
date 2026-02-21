@@ -14,13 +14,11 @@
 #include <cscore_cv.h>
 
 std::map<unsigned int, AprilTagData> VisionSub::m_tagData;
-double VisionSub::m_translationValue;
+double VisionSub::m_translationValue = 0.0;
+double VisionSub::m_shootVelocity = 0.0;
 
 VisionSub::VisionSub()
 {
-    // frc::SmartDashboard::PutBoolean("Confirm Calibration", false);
-    frc::SmartDashboard::PutBoolean("Run Cailbration", false);
-
     std::thread visionThread(VisionThread);
     visionThread.detach();
 }
@@ -30,7 +28,14 @@ VisionSub::~VisionSub()
 // This method will be called once per scheduler run
 void VisionSub::Periodic() 
 {
-    
+    // frc::SmartDashboard::PutNumber("Tag Translation", 0.0);
+
+    frc::SmartDashboard::PutNumber("Test", VisionSub::GetTagDistance());
+
+    // if(VisionSub::GetTagDistance() != 0.00)
+    // {
+        
+    // }
 }
 
 void VisionSub::VisionThread()
@@ -51,6 +56,27 @@ double VisionSub::GetTagTranslation()
 {
     return m_translationValue;
 }
+
+double VisionSub::GetTagDistance()
+{
+    if(m_tagData.contains(10))
+    {
+        return m_tagData[10].distance;
+    }
+    else if (m_tagData.contains(26))
+    {
+        return m_tagData[26].distance;
+    }
+    else
+    {
+        return 0.0;
+    }
+    
+}
+
+
+
+
 
 void VisionSub::RunAprilTagDetection()
 {
@@ -84,6 +110,10 @@ void VisionSub::RunAprilTagDetection()
 
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
+    // auto tagsTable = nt::NetworkTableInstance::GetDefault().GetTable("apriltags");
+    // auto pubTags = tagsTable->GetIntegerArrayTopic("tags").Publish();
+
+
     while (true) {
 
         if (feed.GrabFrameNoTimeout(frame) == 0)
@@ -98,6 +128,7 @@ void VisionSub::RunAprilTagDetection()
             cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
             cv::aruco::ArucoDetector detector(dictionary, detectorParams);
             detector.detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);
+            m_translationValue = 0.00;
 
             size_t nMarkers = markerCorners.size();
             std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
@@ -120,23 +151,48 @@ void VisionSub::RunAprilTagDetection()
                     {
                         std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
                     };
-
+ 
                     m_tagData.insert({tagId, data});
                     
                     cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
                     cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
+                    frc::SmartDashboard::PutNumber("Tag Z-axis", tvecs[i](2));
+                    frc::SmartDashboard::PutNumber("Tag x-axis", tvecs[i](0));
+                    frc::SmartDashboard::PutNumber("Tag Distnace", data.distance);
 
                     if((markerIds[i] == 26) || (markerIds[i] == 10))
                     {
-                        m_translationValue = tvecs[i](0);
+                        m_translationValue = (tvecs[i](0) / tvecs[i](2));
+                         double m_numeratorCalculation = (VisionConstants::kGravity * (std::pow(VisionSub::GetTagDistance(), 2.0)));
+                        double m_angleCalculation = 2 * (std::pow (cos (VisionConstants::kLaunchAngle), 2));
+                        double m_heightCalculation = (VisionConstants::kShooterHeight + (VisionSub::GetTagDistance() * std::tan(VisionConstants::kLaunchAngle)) - VisionConstants::kHubHeight);
+
+                        m_shootVelocity = std::sqrt(m_numeratorCalculation / (m_angleCalculation * m_heightCalculation));
                     }
+                    else
+                    {
+                        m_shootVelocity = 0.0;
+                        m_translationValue = 0.0;
+                    }
+
+                    // tagsTable->GetEntry(fmt::format("pose_{}", markerIds[i]))
+                    //     .SetDoubleArray ({{m_translationValue, m_shootVelocity}});
                 }
             }
             
             outputStream.PutFrame(PosFeed);
+            frc::SmartDashboard::PutNumber("Tag Translation", m_translationValue);
+
+            frc::SmartDashboard::PutNumber("Shoot Velocity Calculation", m_shootVelocity);
+
+            // pubTags.Set
         }
     }
 }
+
+
+
+
 
 void VisionSub::RunCharucoBoardCailbration()
 {   

@@ -59,10 +59,12 @@ void ShooterSub::SetVelocity(float velocity)
     m_shooterPid2.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
 }
 
-std::pair<double, double> ShooterSub::GetVelocity()
+double ShooterSub::GetVelocity1()
 {
-    double motor1Velocity = m_shooterEncoder1.GetVelocity();
-    double motor2Velocity = m_shooterEncoder2.GetVelocity();
+    return m_shooterEncoder1.GetVelocity();
+}
 
-    return std::pair<double, double>(motor1Velocity, motor2Velocity);
+double ShooterSub::GetVelocity2()
+{
+    return m_shooterEncoder2.GetVelocity();
 }

@@ -17,6 +17,8 @@ class TowerSub : public frc2::SubsystemBase {
 
   void SetVelocity(float velocity);
 
+  void SetPower(float power);
+
   double GetVelocity();
 
  private:

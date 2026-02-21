@@ -43,6 +43,8 @@ DriveSubsystem::DriveSubsystem()
   {
     std::cout << e.what() << std::endl;
   }
+
+  m_visionTagTracking = false;
 }
 
 void DriveSubsystem::Periodic() {
@@ -51,6 +53,8 @@ void DriveSubsystem::Periodic() {
                         m_gyro.GetAngle(frc::ADIS16470_IMU::IMUAxis::kZ)}),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+
+  frc::SmartDashboard::PutBoolean("Tracking Tag Enabled", m_visionTagTracking);
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -62,8 +66,13 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       xSpeed.value() * DriveConstants::kMaxSpeed;
   units::meters_per_second_t ySpeedDelivered =
       ySpeed.value() * DriveConstants::kMaxSpeed;
-  units::radians_per_second_t rotDelivered =
+  units::radians_per_second_t rotDelivered = 
       rot.value() * DriveConstants::kMaxAngularSpeed;
+
+  // if(m_visionTagTracking)
+  // {
+  //   rotDelivered = VisionSub::GetTagTranslation() * DriveConstants::kMaxAngularSpeed * VisionConstants::kTagTrackingMultipler;
+  // }
 
   auto states = kDriveKinematics.ToSwerveModuleStates(
       fieldRelative
@@ -173,3 +182,27 @@ path->preventFlipping = true;
 
 return path;
 }
+
+void DriveSubsystem::SetTagTracking()
+{
+  m_visionTagTracking = !m_visionTagTracking;
+}
+
+
+// frc2::CommandPtr DriveSubsystem::SetTagTracking()
+// {
+//   return StartEnd
+//   {
+//     // execute
+//     [this]
+//     {
+//       visionTagTracking = !visionTagTracking;
+//     }
+
+//     //end
+//     [this]
+//     {
+
+//     }
+//   };
+// }

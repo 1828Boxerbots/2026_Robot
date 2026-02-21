@@ -27,7 +27,9 @@ class VisionSub : public frc2::SubsystemBase {
 
   static void VisionThread();
 
-  double GetTagTranslation();
+  static double GetTagTranslation();
+
+  static double GetTagDistance();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -41,4 +43,6 @@ class VisionSub : public frc2::SubsystemBase {
   static std::map<unsigned int, AprilTagData> m_tagData;
 
   static double m_translationValue;
+
+  static double m_shootVelocity;
 };

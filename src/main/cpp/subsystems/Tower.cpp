@@ -4,25 +4,25 @@
 
 TowerSub::TowerSub()
 {
-    m_conversionFactor = TowerConstants::kWheelDiameter *
-        std::numbers::pi /
-        TowerConstants::kMotorReduction;
+    // m_conversionFactor = TowerConstants::kWheelDiameter *
+    //     std::numbers::pi /
+    //     TowerConstants::kMotorReduction;
 
-    double velocityFeedForward =
-        1 / OtherConstants::kNeo2FeedForwardRps;
+    // double velocityFeedForward =
+    //     1 / OtherConstants::kNeo2FeedForwardRps;
 
-    rev::spark::SparkMaxConfig towerConfig{};
-    towerConfig.encoder
-        .VelocityConversionFactor(m_conversionFactor / 60);
-    towerConfig.closedLoop
-        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
-        .Pid(1, 0, 0)
-        .OutputRange(-1, 1)
-        .VelocityFF(velocityFeedForward);
+    // rev::spark::SparkMaxConfig towerConfig{};
+    // towerConfig.encoder
+    //     .VelocityConversionFactor(m_conversionFactor / 60);
+    // towerConfig.closedLoop
+    //     .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+    //     .Pid(1, 0, 0)
+    //     .OutputRange(-1, 1)
+    //     .VelocityFF(velocityFeedForward);
 
-    m_towerMotor.Configure(towerConfig,
-        rev::spark::SparkBase::ResetMode::kResetSafeParameters,
-        rev::spark::SparkBase::PersistMode::kPersistParameters);
+    // m_towerMotor.Configure(towerConfig,
+    //     rev::spark::SparkBase::ResetMode::kResetSafeParameters,
+    //     rev::spark::SparkBase::PersistMode::kPersistParameters);
 }
 
 TowerSub::~TowerSub() {}
@@ -37,6 +37,11 @@ void TowerSub::Periodic()
 void TowerSub::SetVelocity(float velocity)
 {
     m_towerPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+}
+
+void TowerSub::SetPower(float power)
+{
+    m_towerMotor.Set(power);
 }
 
 double TowerSub::GetVelocity()

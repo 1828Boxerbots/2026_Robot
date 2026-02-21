@@ -17,7 +17,9 @@ class ShooterSub : public frc2::SubsystemBase {
 
   void SetVelocity(float velocity);
 
-  std::pair<double, double> GetVelocity();
+  double GetVelocity1();
+
+  double GetVelocity2();
 
  private:
   rev::spark::SparkMax m_shooterMotor1{ShooterConstants::kShooterMotorAPort, rev::spark::SparkMax::MotorType::kBrushless};

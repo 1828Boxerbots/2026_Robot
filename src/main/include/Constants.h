@@ -10,6 +10,7 @@
 #include <units/current.h>
 #include <units/length.h>
 #include <units/velocity.h>
+#include <units/angle.h>
 
 #include <numbers>
 
@@ -110,7 +111,7 @@ namespace IntakeConstants
     inline constexpr int kIntakeMotorPort = 11;
 
     // Speeds
-    inline constexpr int kVelocity = 4.0;
+    inline constexpr int kIntakePower = 0.5;
 
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -138,7 +139,7 @@ namespace TowerConstants
     inline constexpr int kTowerMotorPort = 14;
     
     // Other Knostants
-    inline constexpr double kVelocity = 2.0;
+    inline constexpr double kPower = 0.5;
     
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -164,3 +165,14 @@ namespace OtherConstants
     inline constexpr double kNeo2FeedForwardRps = 5676.0 / 60;
     
 } // namespce OtherConstants
+
+namespace VisionConstants
+{
+    inline constexpr double kTagTrackingMultipler = 1.0; // changes how agressive it rotated to the target
+
+    inline constexpr double kShooterHeight = 0.5207; // In meters
+    inline constexpr double kHubHeight = 1.8288; // In meters
+    inline constexpr double kGravity = 9.81; // In meters per second
+    inline constexpr double kLaunchAngle = (79.0 * (3.14 / 180)); // In degree
+    
+} // namespace VisionConstants

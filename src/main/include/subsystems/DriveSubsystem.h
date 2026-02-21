@@ -16,6 +16,7 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "subsystems/VisionSub.h"
 
 //Pathplanner includes
 #include <pathplanner/lib/path/PathPlannerPath.h>
@@ -109,6 +110,9 @@ class DriveSubsystem : public frc2::SubsystemBase {
                          -DriveConstants::kTrackWidth / 2}};
 
     frc::ChassisSpeeds GetRelativeChassisSpeeds();
+
+    void SetTagTracking();
+    
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -126,6 +130,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   frc::SwerveDriveOdometry<4> m_odometry;
 
   std::shared_ptr<pathplanner::PathPlannerPath> OnTheFlyPathOne();
+
+  bool m_visionTagTracking;
 };
 
 
