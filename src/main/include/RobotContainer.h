@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <frc/XboxController.h>
+#include <frc2/command/button/CommandXboxController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -17,6 +17,11 @@
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/VisionSub.h"
+#include "subsystems/IntakeSub.h"
+#include "subsystems/ArmSub.h"
+#include "subsystems/TowerSub.h"
+#include "subsystems/ShooterSub.h"
+
 
 
 /**
@@ -30,17 +35,21 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::Command* GetAutonomousCommand();
+  frc2::CommandPtr GetAutonomousCommand();
 
  private:
   // The driver's controller
-  frc::XboxController m_driverController{OIConstants::kDriverControllerPort};
+  frc2::CommandXboxController m_driverController{OIConstants::kDriverControllerPort};
 
   // The robot's subsystems and commands are defined here...
 
   // The robot's subsystems
   DriveSubsystem m_drive;
   VisionSub m_Vision;
+  IntakeSub m_intake;
+  ArmSub m_arm;
+  TowerSub  m_tower;
+  ShooterSub m_shooter;
 
 
   // The chooser for the autonomous routines

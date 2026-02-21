@@ -92,9 +92,28 @@
     "typeinfo": "cpp",
     "valarray": "cpp",
     "variant": "cpp",
-    "xtr1common": "cpp",
+    "charconv": "cpp",
+    "coroutine": "cpp",
+    "format": "cpp",
+    "ios": "cpp",
+    "locale": "cpp",
+    "xfacet": "cpp",
+    "xhash": "cpp",
+    "xiosbase": "cpp",
+    "xlocale": "cpp",
+    "xlocbuf": "cpp",
+    "xlocinfo": "cpp",
+    "xlocmes": "cpp",
+    "xlocmon": "cpp",
+    "xlocnum": "cpp",
+    "xloctime": "cpp",
     "xmemory": "cpp",
     "xstring": "cpp",
-    "xutility": "cpp"
-  }
+    "xtr1common": "cpp",
+    "xtree": "cpp",
+    "xutility": "cpp",
+    "queue": "cpp",
+    "stack": "cpp"
+  },
+  "wpilib.selectDefaultSimulateExtension": true
 }

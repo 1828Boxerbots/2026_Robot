@@ -92,9 +92,75 @@ constexpr double kPThetaController = 0.5;
 
 extern const frc::TrapezoidProfile<units::radians>::Constraints
     kThetaControllerConstraints;
+
+
+
+
+
 }  // namespace AutoConstants
 
 namespace OIConstants {
 constexpr int kDriverControllerPort = 0;
 constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
+
+namespace IntakeConstants
+{
+    // Ports
+    inline constexpr int kIntakeMotorPort = 11;
+
+    // Speeds
+    inline constexpr int kVelocity = 4.0;
+
+    inline constexpr double kWheelDiameter = 0.0508; // value is in meters
+    inline constexpr double kMotorReduction = 1.0;
+
+} // namespace IntakeConstants
+
+namespace ArmConstants
+{
+    // Ports
+    inline constexpr int kArmMotorAPort = 12;
+    inline constexpr int kArmMotorBPort = 13;
+
+    // Encoder Values in Degrees
+    inline constexpr int kStowedPosition = 0;
+    inline constexpr int kDeloyedPositon = 130; // 13pi/18 in rad
+
+    // Other Konstants
+    inline constexpr double kPositionTolerance = 20.0;
+
+} // namespace ArmConstants
+
+namespace TowerConstants
+{
+    //  Ports
+    inline constexpr int kTowerMotorPort = 14;
+    
+    // Other Knostants
+    inline constexpr double kVelocity = 2.0;
+    
+    inline constexpr double kWheelDiameter = 0.0508; // value is in meters
+    inline constexpr double kMotorReduction = 1.0;
+
+} // namespace TowerConstants
+
+namespace ShooterConstants
+{
+    //  Ports
+    inline constexpr int kShooterMotorAPort = 15;
+    inline constexpr int kShooterMotorBPort = 16;
+    
+    // Other Knostants
+    inline constexpr double kVelocity = 5.0;
+    
+    inline constexpr double kWheelDiameter = 0.1016; // value is in meters
+    inline constexpr double kMotorReduction = 1.0;
+    
+} // namespace ShooterConstants
+
+namespace OtherConstants
+{
+    inline constexpr double kNeo2FeedForwardRps = 5676.0 / 60;
+    
+} // namespce OtherConstants

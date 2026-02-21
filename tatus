@@ -1,0 +1,77 @@
+[33mcommit 283f9b2007df478b3e1607945e8d33da9c3a427f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mOdometry[m[33m, [m[1;31morigin/Odometry[m[33m)[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Wed Feb 4 19:09:41 2026 -0700
+
+    Made more simalar to main branch
+
+[33mcommit 022f970c6091721571dd8a422663cd03a4f3df2a[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Wed Feb 4 17:18:15 2026 -0700
+
+    Updated the Build gradle version to 2.1
+
+[33mcommit 6ff1196c2268bcdec702d66aaa84f20fa6cc1bdd[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Wed Feb 4 17:01:33 2026 -0700
+
+    Made Smartdashboard display correct autochooser
+
+[33mcommit 3ba146071ae42424be3f31c450e8f8d0afaaa558[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Sat Jan 31 11:50:37 2026 -0700
+
+    Made two paths to choose from: Move sideways and Move forward
+
+[33mcommit 988fa2066ef1139dd05c751acf038bd6654c6528[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Sat Jan 31 11:34:29 2026 -0700
+
+    Readded the Autobuilder (got deleted somehow)
+
+[33mcommit d63c80c775c7b4ef3ce4cbd50845fe78721f1ed4[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Sat Jan 31 09:39:08 2026 -0700
+
+    added robot.h
+
+[33mcommit fe00c83284534957af174b64f84fa6e8903beeaf[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Sat Jan 31 09:19:17 2026 -0700
+
+    Github learning session
+
+[33mcommit 8cb624937260b6fad32cf896c5cb272d15757edf[m
+Author: Tristyn Maldonado <124454854+AverageBreadEnjoyer@users.noreply.github.com>
+Date:   Sat Jan 31 09:15:29 2026 -0700
+
+    Reverted to working sendable chooser code
+
+[33mcommit b00f48a4234edfb8545e5bdd1522cbc6d0213f2e[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Nathaniel Patla <njpatla@icloud.com>
+Date:   Wed Jan 14 18:19:31 2026 -0700
+
+    WORKING DRIVE
+    
+    Tested swerve drive with swerve base
+
+[33mcommit 01f341f5fb9e55d3117ce8b05c8416b9e3c59bc6[m
+Author: Nathaniel Patla <njpatla@icloud.com>
+Date:   Tue Jan 13 17:33:29 2026 -0700
+
+    Updated Drive Constants
+    
+    Changed CAN IDs and change the wheel base ( distance from front to back wheels) and track width (distance from left to right wheels)
+
+[33mcommit ed663ff8a2f433c99369e79fadd1a1bda1829e2d[m
+Author: Nathaniel Patla <njpatla@icloud.com>
+Date:   Tue Jan 13 17:00:48 2026 -0700
+
+    Added WPILib & Unupdated Swerve
+    
+    Swerve is taken from Rev Example Code however the variables are not updated with this years robot
+
+[33mcommit 548a6218b4c636a05fe870e208b390230c38be42[m
+Author: RyanAlterman <38821584+RyanAlterman@users.noreply.github.com>
+Date:   Mon Jan 12 14:39:51 2026 -0700
+
+    Initial commit
