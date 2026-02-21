@@ -16,6 +16,7 @@
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "files.associations": {
+    "utility": "cpp",
     "any": "cpp",
     "array": "cpp",
     "atomic": "cpp",
@@ -66,7 +67,6 @@
     "system_error": "cpp",
     "tuple": "cpp",
     "type_traits": "cpp",
-    "utility": "cpp",
     "fstream": "cpp",
     "future": "cpp",
     "initializer_list": "cpp",
