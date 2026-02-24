@@ -9,6 +9,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <opencv2/opencv.hpp>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
 
 struct  AprilTagData
   {
@@ -45,4 +47,6 @@ class VisionSub : public frc2::SubsystemBase {
   static double m_translationValue;
 
   static double m_shootVelocity;
+
+  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("Vision");
 };

@@ -28,14 +28,7 @@ VisionSub::~VisionSub()
 // This method will be called once per scheduler run
 void VisionSub::Periodic() 
 {
-    // frc::SmartDashboard::PutNumber("Tag Translation", 0.0);
 
-    frc::SmartDashboard::PutNumber("Test", VisionSub::GetTagDistance());
-
-    // if(VisionSub::GetTagDistance() != 0.00)
-    // {
-        
-    // }
 }
 
 void VisionSub::VisionThread()
@@ -110,9 +103,8 @@ void VisionSub::RunAprilTagDetection()
 
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
-    // auto tagsTable = nt::NetworkTableInstance::GetDefault().GetTable("apriltags");
-    // auto pubTags = tagsTable->GetIntegerArrayTopic("tags").Publish();
-
+    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+    
 
     while (true) {
 
