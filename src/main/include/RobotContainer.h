@@ -21,6 +21,9 @@
 #include "subsystems/TowerSub.h"
 #include "subsystems/ShooterSub.h"
 
+#include <pathplanner/lib/auto/NamedCommands.h>
+#include <memory>
+
 
 
 /**
@@ -34,7 +37,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+  frc2::Command* GetAutonomousCommand();
 
  private:
   // The driver's controller
@@ -48,10 +51,10 @@ class RobotContainer {
   ArmSub m_arm;
   TowerSub  m_tower;
   ShooterSub m_shooter;
+ frc::SendableChooser<frc2::Command*> m_autoChooser;
 
 
-  // The chooser for the autonomous routines
-  frc::SendableChooser<frc2::Command*> m_chooser;
+  
 
   void ConfigureButtonBindings();
 };

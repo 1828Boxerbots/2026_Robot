@@ -33,7 +33,10 @@ DriveSubsystem::DriveSubsystem()
                      m_gyro.GetAngle(frc::ADIS16470_IMU::IMUAxis::kZ)}),
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
-                 frc::Pose2d{}} {
+                 frc::Pose2d{}} //setting the member variables in the constructor initializer list
+                 
+//Actual constructor logic
+{
   try {
   // Usage reporting for MAXSwerve template
   HAL_Report(HALUsageReporting::kResourceType_RobotDrive,
@@ -43,6 +46,58 @@ DriveSubsystem::DriveSubsystem()
   {
     std::cout << e.what() << std::endl;
   }
+   pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
+
+        // Configure the AutoBuilder last
+        pathplanner::AutoBuilder::configure(
+            // Robot pose supplier  
+            [this]()
+            {
+                return GetPose();
+            },
+            // Method to reset odometry (will be called if your auto has a starting pose)
+            [this](const frc::Pose2d& pose)
+            { 
+                this->ResetOdometry(pose); 
+            },
+            // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            [this]()
+            {
+                return GetRelativeChassisSpeeds();
+            },
+            // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            [this](const frc::ChassisSpeeds& speeds)
+            { 
+                units::meters_per_second_t xSpeed = speeds.vx;
+                units::meters_per_second_t ySpeed = speeds.vy;
+                units::radians_per_second_t rot = speeds.omega;
+
+                this->Drive(xSpeed, ySpeed, rot, false); 
+            },
+            // PPHolonomicController is the built in path following controller for holonomic drive trains
+            std::make_shared<pathplanner::PPHolonomicDriveController>
+            ( 
+                pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
+                pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
+            ),
+            // The robot configuration
+            config,
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
+            []() 
+            {
+                auto alliance = frc::DriverStation::GetAlliance();
+                if (alliance) 
+                    return alliance.value() == frc::DriverStation::Alliance::kRed;
+                    
+                return false;
+            },
+            // Reference to this subsystem to set requirements
+            this
+        );        
+
+          // Returns a frc2::CommandPtr that is freed at program termination
 }
 
 void DriveSubsystem::Periodic() {

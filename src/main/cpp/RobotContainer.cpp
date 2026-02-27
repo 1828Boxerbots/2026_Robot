@@ -38,14 +38,9 @@ using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
+ //Named registered commands for pathplanner GUI
 
-  // Configure the button bindings
-  ConfigureButtonBindings();
-
-  // Set up default drive command
-  // The left stick controls translation of the robot.
-  // Turning is controlled by the X axis of the right stick.
-  m_drive.SetDefaultCommand(frc2::RunCommand(
+ m_drive.SetDefaultCommand(frc2::RunCommand(
       [this] {
         m_drive.Drive(
             -units::meters_per_second_t{frc::ApplyDeadband(
@@ -57,6 +52,27 @@ RobotContainer::RobotContainer() {
             true);
       },
       {&m_drive}));
+
+
+   pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, ArmConstants::kDeloyedPositon));
+   pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, ArmConstants::kStowedPosition));
+   pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
+   pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, IntakeConstants::kIntakeVelocity));
+   pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+   pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+
+  // Configure the button bindings
+  ConfigureButtonBindings();
+
+  // Set up default drive command
+  // The left stick controls translation of the robot.
+  // Turning is controlled by the X axis of the right stick.
+  
+
+
+    m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+    frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
+  
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -73,109 +89,28 @@ void RobotContainer::ConfigureButtonBindings() {
 
     // Shoot
     (!m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kVelocity, TowerConstants::kVelocity).ToPtr());
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity).ToPtr());
     // Shoot Reverse
     (m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kVelocity, -TowerConstants::kVelocity).ToPtr());
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kShooterVelocity, -TowerConstants::kTowerVelocity).ToPtr());
 
     // Intake
     (!m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kVelocity).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kIntakeVelocity).ToPtr());
 
     // Intake Reverse
     (m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kVelocity).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kIntakeVelocity).ToPtr());
 
 }
 
-frc2::Command* RobotContainer::GetAutonomousCommand() {
-  // Set up config for trajectory
-  frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
-                               AutoConstants::kMaxAcceleration);
-  // Add kinematics to ensure max speed is actually obeyed
-  config.SetKinematics(m_drive.kDriveKinematics);
-
-  // An example trajectory to follow.  All units in meters.
-  auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-      // Start at the origin facing the +X direction
-      frc::Pose2d{0_m, 0_m, 0_deg},
-      // Pass through these two interior waypoints, making an 's' curve path
-      {frc::Translation2d{1_m, 1_m}, frc::Translation2d{2_m, -1_m}},
-      // End 3 meters straight ahead of where we started, facing forward
-      frc::Pose2d{3_m, 0_m, 0_deg},
-      // Pass the config
-      config);
-
-  frc::ProfiledPIDController<units::radians> thetaController{
-      AutoConstants::kPThetaController, 0, 0,
-      AutoConstants::kThetaControllerConstraints};
-
-  thetaController.EnableContinuousInput(units::radian_t{-std::numbers::pi},
-                                        units::radian_t{std::numbers::pi});
-
-}
-
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() 
+frc2::Command* RobotContainer::GetAutonomousCommand() 
 {
-    try
-    {
-        pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
 
-        // Configure the AutoBuilder last
-        pathplanner::AutoBuilder::configure(
-            // Robot pose supplier  
-            [this]()
-            {
-                return m_drive.GetPose();
-            },
-            // Method to reset odometry (will be called if your auto has a starting pose)
-            [this](const frc::Pose2d& pose)
-            { 
-                m_drive.ResetOdometry(pose); 
-            },
-            // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            [this]()
-            {
-                return m_drive.GetRelativeChassisSpeeds();
-            },
-            // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            [this](const frc::ChassisSpeeds& speeds)
-            { 
-                units::meters_per_second_t xSpeed = speeds.vx;
-                units::meters_per_second_t ySpeed = speeds.vy;
-                units::radians_per_second_t rot = speeds.omega;
+       return m_autoChooser.GetSelected();
 
-                m_drive.Drive(xSpeed, ySpeed, rot, false); 
-            },
-            // PPHolonomicController is the built in path following controller for holonomic drive trains
-            std::make_shared<pathplanner::PPHolonomicDriveController>
-            ( 
-                pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
-                pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
-            ),
-            // The robot configuration
-            config,
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
-            // This will flip the path being followed to the red side of the field.
-            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
-            []() 
-            {
-                auto alliance = frc::DriverStation::GetAlliance();
-                if (alliance) 
-                    return alliance.value() == frc::DriverStation::Alliance::kRed;
-                    
-                return false;
-            },
-            // Reference to this subsystem to set requirements
-            &m_drive
-        );        
-
-        // An example trajectory to follow.  All units in meters.
-        std::string filepath = "Simple Auto";
-        return pathplanner::PathPlannerAuto(filepath).ToPtr();
-    }
-    catch(std::exception& e) 
-    {
-        std::cout << e.what();
-    }
+        // // An example trajectory to follow.  All units in meters.
+        // std::string filepath = "Named Command Drive Test";
+        // return pathplanner::PathPlannerAuto(filepath).ToPtr();
+    
 }

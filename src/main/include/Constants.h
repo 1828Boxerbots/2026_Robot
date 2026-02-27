@@ -110,7 +110,7 @@ namespace IntakeConstants
     inline constexpr int kIntakeMotorPort = 11;
 
     // Speeds
-    inline constexpr int kVelocity = 4.0;
+    inline constexpr int kIntakeVelocity = 4.0;
 
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -138,7 +138,7 @@ namespace TowerConstants
     inline constexpr int kTowerMotorPort = 14;
     
     // Other Knostants
-    inline constexpr double kVelocity = 2.0;
+    inline constexpr double kTowerVelocity = 2.0;
     
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -152,7 +152,7 @@ namespace ShooterConstants
     inline constexpr int kShooterMotorBPort = 16;
     
     // Other Knostants
-    inline constexpr double kVelocity = 5.0;
+    inline constexpr double kShooterVelocity = 5.0;
     
     inline constexpr double kWheelDiameter = 0.1016; // value is in meters
     inline constexpr double kMotorReduction = 1.0;

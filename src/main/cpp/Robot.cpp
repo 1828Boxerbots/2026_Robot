@@ -19,7 +19,9 @@ void Robot::RobotInit() {}
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() { frc2::CommandScheduler::GetInstance().Run(); }
+void Robot::RobotPeriodic() {
+   frc2::CommandScheduler::GetInstance().Run(); 
+  }
 
 /**
  * This function is called once each time the robot enters Disabled mode. You
@@ -43,7 +45,10 @@ void Robot::AutonomousInit() {
   }
 }
 
-void Robot::AutonomousPeriodic() {}
+void Robot::AutonomousPeriodic() 
+{    
+ 
+}
 
 void Robot::TeleopInit() {
   // This makes sure that the autonomous stops running when

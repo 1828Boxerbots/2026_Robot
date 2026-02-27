@@ -47,6 +47,7 @@ void ArmSub::Periodic()
     frc::SmartDashboard::PutNumber("Arm Encoder 2 Position", m_absArmEncoder2.GetPosition());
     frc::SmartDashboard::PutNumber("Arm PID 1 Set Position", m_armPid1.GetSetpoint());
     frc::SmartDashboard::PutNumber("Arm PID 2 Set Position", m_armPid2.GetSetpoint());
+    frc::SmartDashboard::PutString("Test", "Hearbeat");
 }
 
 void ArmSub::SimulationPeriodic()
