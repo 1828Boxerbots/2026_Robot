@@ -10,6 +10,7 @@
 #include <units/current.h>
 #include <units/length.h>
 #include <units/velocity.h>
+#include <frc/geometry/Pose2d.h>
 
 #include <numbers>
 
@@ -111,6 +112,7 @@ namespace IntakeConstants
 
     // Speeds
     inline constexpr int kIntakeVelocity = 4.0;
+    inline constexpr int kIntakePower = 0.5;
 
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -125,7 +127,7 @@ namespace ArmConstants
 
     // Encoder Values in Degrees
     inline constexpr int kStowedPosition = 0;
-    inline constexpr int kDeloyedPositon = 130; // 13pi/18 in rad
+    inline constexpr int kDeployedPosition = 130; // 13pi/18 in rad
 
     // Other Konstants
     inline constexpr double kPositionTolerance = 20.0;
@@ -158,6 +160,16 @@ namespace ShooterConstants
     inline constexpr double kMotorReduction = 1.0;
     
 } // namespace ShooterConstants
+
+namespace OdometryConstants
+{
+    //Pathfinding constants
+
+    //robot constants
+    inline constexpr frc::Pose2d kCool = frc::Pose2d(1.365_m, 5.938_m, frc::Rotation2d(180_deg));
+
+
+} //Odometry Constants
 
 namespace OtherConstants
 {

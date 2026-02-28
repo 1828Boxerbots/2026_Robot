@@ -21,6 +21,6 @@ class LoadCmd : public frc2::CommandHelper<frc2::Command, LoadCmd>
 
  private:
   IntakeSub *m_subsystem = nullptr; 
-  double m_speed = 0;
+  double m_power = 0;
   bool m_isFinished = false;
 };

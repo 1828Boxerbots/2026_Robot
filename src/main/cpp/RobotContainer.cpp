@@ -54,8 +54,8 @@ RobotContainer::RobotContainer() {
       {&m_drive}));
 
 
-   pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, ArmConstants::kDeloyedPositon));
-   pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, ArmConstants::kStowedPosition));
+   pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kDeployedPosition));
+   pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition));
    pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
    pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, IntakeConstants::kIntakeVelocity));
    pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
@@ -83,9 +83,9 @@ void RobotContainer::ConfigureButtonBindings() {
     m_driverController.RightBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.SetX(); }, {&m_drive}));
 
     // Arm Deploy
-    m_driverController.A().OnTrue(ArmCmd(&m_arm, ArmConstants::kDeloyedPositon).ToPtr());
+    m_driverController.A().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kDeployedPosition).ToPtr());
     // Arm Stow
-    m_driverController.B().OnTrue(ArmCmd(&m_arm, ArmConstants::kStowedPosition).ToPtr());
+    m_driverController.B().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kStowedPosition).ToPtr());
 
     // Shoot
     (!m_driverController.LeftBumper()
