@@ -25,22 +25,21 @@ class ArmSub : public frc2::SubsystemBase {
   void SetPos(double pos);
 
  private:
-  rev::spark::SparkMax m_armMotor1{ArmConstants::kArmMotorAPort, rev::spark::SparkMax::MotorType::kBrushless};
-  rev::spark::SparkMax m_armMotor2{ArmConstants::kArmMotorBPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_leftarmMotor{ArmConstants::kArmMotorAPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_rightarmMotor{ArmConstants::kArmMotorBPort, rev::spark::SparkMax::MotorType::kBrushless};
 
-  rev::spark::SparkAbsoluteEncoder m_absArmEncoder1 = m_armMotor1.GetAbsoluteEncoder();
-  rev::spark::SparkAbsoluteEncoder m_absArmEncoder2 = m_armMotor2.GetAbsoluteEncoder();
-
-  rev::spark::SparkClosedLoopController m_armPid1 = m_armMotor1.GetClosedLoopController();
-  rev::spark::SparkClosedLoopController m_armPid2 = m_armMotor2.GetClosedLoopController();
+  rev::spark::SparkAbsoluteEncoder m_leftabsArmEncoder = m_leftarmMotor.GetAbsoluteEncoder();
+  rev::spark::SparkAbsoluteEncoder m_rightabsArmEncoder = m_rightarmMotor.GetAbsoluteEncoder();
+  rev::spark::SparkClosedLoopController m_leftarmPid = m_leftarmMotor.GetClosedLoopController();
+  rev::spark::SparkClosedLoopController m_rightarmPid = m_rightarmMotor.GetClosedLoopController();
 
   double m_rotationFactor;
 
   // Simulation
   frc::DCMotor m_gearbox = frc::DCMotor::NEO(1);
-  rev::spark::SparkMaxSim m_armMotorSim1{&m_armMotor1, &m_gearbox};
-  rev::spark::SparkMaxSim m_armMotorSim2{&m_armMotor2, &m_gearbox};
+  rev::spark::SparkMaxSim m_leftarmMotorSim{&m_leftarmMotor, &m_gearbox};
+  rev::spark::SparkMaxSim m_rightarmMotorSim{&m_rightarmMotor, &m_gearbox};
 
-  rev::spark::SparkAbsoluteEncoderSim m_absArmEncoderSim1 = m_armMotorSim1.GetAbsoluteEncoderSim();
-  rev::spark::SparkAbsoluteEncoderSim m_absArmEncoderSim2 = m_armMotorSim2.GetAbsoluteEncoderSim();
+  rev::spark::SparkAbsoluteEncoderSim m_leftabsArmEncoderSim = m_leftarmMotorSim.GetAbsoluteEncoderSim();
+  rev::spark::SparkAbsoluteEncoderSim m_rightabsArmEncoderSim = m_rightarmMotorSim.GetAbsoluteEncoderSim();
 };

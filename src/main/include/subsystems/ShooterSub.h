@@ -20,14 +20,13 @@ class ShooterSub : public frc2::SubsystemBase {
   std::pair<double, double> GetVelocity();
 
  private:
-  rev::spark::SparkMax m_shooterMotor1{ShooterConstants::kShooterMotorAPort, rev::spark::SparkMax::MotorType::kBrushless};
-  rev::spark::SparkMax m_shooterMotor2{ShooterConstants::kShooterMotorBPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_leftshooterMotor{ShooterConstants::kLeftShooterMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_rightshooterMotor{ShooterConstants::kRightShooterMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
 
-  rev::spark::SparkRelativeEncoder m_shooterEncoder1 = m_shooterMotor1.GetEncoder();
-  rev::spark::SparkRelativeEncoder m_shooterEncoder2 = m_shooterMotor2.GetEncoder();
-
-  rev::spark::SparkClosedLoopController m_shooterPid1 = m_shooterMotor1.GetClosedLoopController();
-  rev::spark::SparkClosedLoopController m_shooterPid2 = m_shooterMotor2.GetClosedLoopController();
+  rev::spark::SparkRelativeEncoder m_leftshooterEncoder = m_leftshooterMotor.GetEncoder();
+  rev::spark::SparkRelativeEncoder m_rightshooterEncoder = m_rightshooterMotor.GetEncoder();
+  rev::spark::SparkClosedLoopController m_leftshooterPid = m_leftshooterMotor.GetClosedLoopController();
+  rev::spark::SparkClosedLoopController m_rightshooterPid = m_rightshooterMotor.GetClosedLoopController();
 
   double m_conversionFactor;
 };

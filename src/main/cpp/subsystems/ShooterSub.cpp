@@ -29,40 +29,40 @@ ShooterSub::ShooterSub()
         .OutputRange(-1, 1)
         .VelocityFF(velocityFeedForward);
 
-    m_shooterMotor1.Configure(shooterConfig1,
+    m_leftshooterMotor.Configure(shooterConfig1,
         rev::spark::SparkBase::ResetMode::kResetSafeParameters,
         rev::spark::SparkBase::PersistMode::kPersistParameters);
 
-    m_shooterMotor2.Configure(shooterConfig2,
+    m_rightshooterMotor.Configure(shooterConfig2,
         rev::spark::SparkBase::ResetMode::kResetSafeParameters,
         rev::spark::SparkBase::PersistMode::kPersistParameters);
     
-    m_shooterMotor1.SetInverted(false);
-    m_shooterMotor2.SetInverted(true);
+    m_leftshooterMotor.SetInverted(false);
+    m_rightshooterMotor.SetInverted(true);
 }
 
 ShooterSub::~ShooterSub() {}
 
 void ShooterSub::Periodic()
 {
-    frc::SmartDashboard::PutNumber("Shooter Motor 1 Power", m_shooterMotor1.Get());
-    frc::SmartDashboard::PutNumber("Shooter Motor 2 Power", m_shooterMotor2.Get());
-    frc::SmartDashboard::PutNumber("Shooter Encoder 1 Velocity", m_shooterEncoder1.GetVelocity());
-    frc::SmartDashboard::PutNumber("Shooter Encoder 2 Velocity", m_shooterEncoder2.GetVelocity());
-    frc::SmartDashboard::PutNumber("Shooter PID 1 Set Position", m_shooterPid1.GetSetpoint());
-    frc::SmartDashboard::PutNumber("Shooter PID 2 Set Position", m_shooterPid2.GetSetpoint());
+    frc::SmartDashboard::PutNumber("Left Shooter Motor Power", m_leftshooterMotor.Get());
+    frc::SmartDashboard::PutNumber("Right Shooter Motor Power", m_rightshooterMotor.Get());
+    frc::SmartDashboard::PutNumber("Left Shooter Encoder Velocity", m_leftshooterEncoder.GetVelocity());
+    frc::SmartDashboard::PutNumber("Right Shooter Encoder Velocity", m_rightshooterEncoder.GetVelocity());
+    frc::SmartDashboard::PutNumber("Left Shooter PID Set Position", m_leftshooterPid.GetSetpoint());
+    frc::SmartDashboard::PutNumber("Right Shooter PID Set Position", m_rightshooterPid.GetSetpoint());
 }
 
 void ShooterSub::SetVelocity(float velocity)
 {
-    m_shooterPid1.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
-    m_shooterPid2.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+    m_leftshooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+    m_rightshooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
 }
 
 std::pair<double, double> ShooterSub::GetVelocity()
 {
-    double motor1Velocity = m_shooterEncoder1.GetVelocity();
-    double motor2Velocity = m_shooterEncoder2.GetVelocity();
+    double leftMotorVelocity = m_leftshooterEncoder.GetVelocity();
+    double rightMotorVelocity = m_rightshooterEncoder.GetVelocity();
 
-    return std::pair<double, double>(motor1Velocity, motor2Velocity);
+    return std::pair<double, double>(leftMotorVelocity, rightMotorVelocity);
 }
