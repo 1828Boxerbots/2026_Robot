@@ -11,6 +11,8 @@
 #include <opencv2/opencv.hpp>
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleTopic.h>
+#include <mutex>
 
 struct  AprilTagData
   {
@@ -23,11 +25,11 @@ class VisionSub : public frc2::SubsystemBase {
   VisionSub();
   ~VisionSub();
 
-  static void RunCharucoBoardCailbration();
+  void RunCharucoBoardCailbration();
 
-  static void RunAprilTagDetection();
+  void RunAprilTagDetection();
 
-  static void VisionThread();
+  void VisionThread();
 
   static double GetTagTranslation();
 
@@ -48,5 +50,5 @@ class VisionSub : public frc2::SubsystemBase {
 
   static double m_shootVelocity;
 
-  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("Vision");
+  nt::DoublePublisher testPub;
 };

@@ -19,7 +19,17 @@ double VisionSub::m_shootVelocity = 0.0;
 
 VisionSub::VisionSub()
 {
-    std::thread visionThread(VisionThread);
+    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+    nt::DoubleTopic testTopic = inst.GetDoubleTopic("/Test/X");
+    testPub = testTopic.Publish();
+    testPub.SetDefault(0.0);
+
+    std::thread visionThread(
+        [&]()
+        {
+            VisionThread();
+        }
+    );
     visionThread.detach();
 }
 VisionSub::~VisionSub()
@@ -67,10 +77,6 @@ double VisionSub::GetTagDistance()
     
 }
 
-
-
-
-
 void VisionSub::RunAprilTagDetection()
 {
     
@@ -103,10 +109,17 @@ void VisionSub::RunAprilTagDetection()
 
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
-    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+    testPub.Set(1);
     
 
     while (true) {
+
+        // tagsTable.reset();
+        // bool testNetwork = true;
+        // tagsTable->SetDefaultBoolean("test bool", testNetwork);
+        // frc::SmartDashboard::PutBoolean("testing network", table->GetBoolean("test", false));
+
+        // std::cout << "test" << std::endl;
 
         if (feed.GrabFrameNoTimeout(frame) == 0)
         {
@@ -169,6 +182,11 @@ void VisionSub::RunAprilTagDetection()
 
                     // tagsTable->GetEntry(fmt::format("pose_{}", markerIds[i]))
                     //     .SetDoubleArray ({{m_translationValue, m_shootVelocity}});
+                    // table->PutNumber("ID", tagId);
+                    // table->PutNumber("shootVelocity", m_shootVelocity);
+                    // table->PutNumber("translationValue", m_translationValue);
+
+                    // frc::SmartDashboard::PutNumber("ID from networktable", table->GetNumber("ID", 0.0));
                 }
             }
             

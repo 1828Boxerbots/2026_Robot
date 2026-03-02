@@ -132,6 +132,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
   std::shared_ptr<pathplanner::PathPlannerPath> OnTheFlyPathOne();
 
   bool m_visionTagTracking;
+  // std::shared_ptr<nt::NetworkTable> table;
 };
 
 
