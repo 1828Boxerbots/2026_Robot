@@ -13,16 +13,16 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <cscore_cv.h>
 
-std::map<unsigned int, AprilTagData> VisionSub::m_tagData;
+// std::map<unsigned int, AprilTagData> VisionSub::m_tagData;
 double VisionSub::m_translationValue = 0.0;
 double VisionSub::m_shootVelocity = 0.0;
 
 VisionSub::VisionSub()
 {
     nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
-    nt::DoubleTopic testTopic = inst.GetDoubleTopic("/Test/X");
-    testPub = testTopic.Publish();
-    testPub.SetDefault(0.0);
+    nt::DoubleArrayTopic visionTopic = inst.GetDoubleArrayTopic("/Vision/IDsData");
+    publisher = visionTopic.Publish();
+    // publisher.SetDefault();
 
     std::thread visionThread(
         [&]()
@@ -62,18 +62,18 @@ double VisionSub::GetTagTranslation()
 
 double VisionSub::GetTagDistance()
 {
-    if(m_tagData.contains(10))
-    {
-        return m_tagData[10].distance;
-    }
-    else if (m_tagData.contains(26))
-    {
-        return m_tagData[26].distance;
-    }
-    else
-    {
-        return 0.0;
-    }
+    // if(m_tagData.contains(10))
+    // {
+    //     return m_tagData[10].distance;
+    // }
+    // else if (m_tagData.contains(26))
+    // {
+    //     return m_tagData[26].distance;
+    // }
+    // else
+    // {
+    //     return 0.0;
+    // }
     
 }
 
@@ -109,7 +109,7 @@ void VisionSub::RunAprilTagDetection()
 
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
-    testPub.Set(1);
+    // testPub.Set(1);
     
 
     while (true) {
@@ -152,18 +152,18 @@ void VisionSub::RunAprilTagDetection()
 
                     unsigned int tagId = markerIds[i];
 
-                    AprilTagData data
-                    {
-                        std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
-                    };
+                    // AprilTagData data
+                    // {
+                    //     std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
+                    // };
  
-                    m_tagData.insert({tagId, data});
+                    // m_tagData.insert({tagId, data});
                     
                     cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
                     cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
                     frc::SmartDashboard::PutNumber("Tag Z-axis", tvecs[i](2));
                     frc::SmartDashboard::PutNumber("Tag x-axis", tvecs[i](0));
-                    frc::SmartDashboard::PutNumber("Tag Distnace", data.distance);
+                    // frc::SmartDashboard::PutNumber("Tag Distnace", data.distance);
 
                     if((markerIds[i] == 26) || (markerIds[i] == 10))
                     {

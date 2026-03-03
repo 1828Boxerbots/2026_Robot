@@ -12,13 +12,21 @@
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
+#include <networktables/DoubleArrayTopic.h>
 #include <mutex>
 
-struct  AprilTagData
-  {
-    // value is in meters
-    double distance;
-  };
+struct AprilTagData
+{
+  int id;
+  double distance;
+  double rot;
+};
+
+// template <>
+// struct wpi::Struct<AprilTagData> 
+// {
+//   static constexpr std::
+// };
 
 class VisionSub : public frc2::SubsystemBase {
  public:
@@ -44,11 +52,9 @@ class VisionSub : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  static std::map<unsigned int, AprilTagData> m_tagData;
-
   static double m_translationValue;
 
   static double m_shootVelocity;
 
-  nt::DoublePublisher testPub;
+  nt::DoubleArrayPublisher publisher;
 };
