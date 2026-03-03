@@ -25,8 +25,8 @@ class ArmSub : public frc2::SubsystemBase {
   void SetPos(double pos);
 
  private:
-  rev::spark::SparkMax m_leftarmMotor{ArmConstants::kArmMotorAPort, rev::spark::SparkMax::MotorType::kBrushless};
-  rev::spark::SparkMax m_rightarmMotor{ArmConstants::kArmMotorBPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_leftarmMotor{ArmConstants::kLeftArmMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
+  rev::spark::SparkMax m_rightarmMotor{ArmConstants::kRightArmMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
 
   rev::spark::SparkAbsoluteEncoder m_leftabsArmEncoder = m_leftarmMotor.GetAbsoluteEncoder();
   rev::spark::SparkAbsoluteEncoder m_rightabsArmEncoder = m_rightarmMotor.GetAbsoluteEncoder();

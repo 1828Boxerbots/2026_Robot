@@ -122,8 +122,8 @@ namespace IntakeConstants
 namespace ArmConstants
 {
     // Ports
-    inline constexpr int kArmMotorAPort = 8; // Left
-    inline constexpr int kArmMotorBPort = 2; // Right
+    inline constexpr int kLeftArmMotorPort = 8; // Left
+    inline constexpr int kRightArmMotorPort = 2; // Right
 
     // Encoder Values in Degrees
     inline constexpr int kStowedPosition = 0;
