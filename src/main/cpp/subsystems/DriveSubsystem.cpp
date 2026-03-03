@@ -34,15 +34,59 @@ DriveSubsystem::DriveSubsystem()
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
                  frc::Pose2d{}} {
-  try {
-  // Usage reporting for MAXSwerve template
-  HAL_Report(HALUsageReporting::kResourceType_RobotDrive,
-             HALUsageReporting::kRobotDriveSwerve_MaxSwerve);
-  } 
-  catch(std::exception& e)
-  {
-    std::cout << e.what() << std::endl;
-  }
+
+   pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
+
+        // Configure the AutoBuilder last
+        pathplanner::AutoBuilder::configure(
+            // Robot pose supplier  
+            [this]()
+            {
+                return GetPose();
+            },
+            // Method to reset odometry (will be called if your auto has a starting pose)
+            [this](const frc::Pose2d& pose)
+            { 
+                this->ResetOdometry(pose); 
+            },
+            // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            [this]()
+            {
+                return GetRelativeChassisSpeeds();
+            },
+            // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            [this](const frc::ChassisSpeeds& speeds)
+            { 
+                units::meters_per_second_t xSpeed = speeds.vx;
+                units::meters_per_second_t ySpeed = speeds.vy;
+                units::radians_per_second_t rot = speeds.omega;
+
+                this->Drive(xSpeed, ySpeed, rot, false); 
+            },
+            // PPHolonomicController is the built in path following controller for holonomic drive trains
+            std::make_shared<pathplanner::PPHolonomicDriveController>
+            ( 
+                pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
+                pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
+            ),
+            // The robot configuration
+            config,
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
+            []() 
+            {
+                auto alliance = frc::DriverStation::GetAlliance();
+                if (alliance) 
+                    return alliance.value() == frc::DriverStation::Alliance::kRed;
+                    
+                return false;
+            },
+            // Reference to this subsystem to set requirements
+            this
+        );        
+
+          // Returns a frc2::CommandPtr that is freed at program termination
 }
 
 void DriveSubsystem::Periodic() {
@@ -144,32 +188,37 @@ frc::ChassisSpeeds DriveSubsystem::GetRelativeChassisSpeeds()
   ); 
 }
 
- std::shared_ptr<pathplanner::PathPlannerPath> DriveSubsystem::OnTheFlyPathOne()
-{
 
-// Create a vector of waypoints from poses. Each pose represents one waypoint.
-// The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
-std::vector<frc::Pose2d> poses{
-    frc::Pose2d(1.0_m, 1.0_m, frc::Rotation2d(0_deg)),
-    frc::Pose2d(3.0_m, 1.0_m, frc::Rotation2d(0_deg)),
-    frc::Pose2d(5.0_m, 3.0_m, frc::Rotation2d(90_deg))
-};
-std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
+// *************************
+//  COMPLEX AUTONOMOUS BELOW
+// *************************
 
-pathplanner::PathConstraints constraints(3.0_mps, 3.0_mps_sq, 360_deg_per_s, 720_deg_per_s_sq); // The constraints for this path.
-// PathConstraints constraints = PathConstraints::unlimitedConstraints(12_V); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
+//  std::shared_ptr<pathplanner::PathPlannerPath> DriveSubsystem::OnTheFlyPathOne()
+// {
 
-// Create the path using the waypoints created above
-// We make a shared pointer here since the path following commands require a shared pointer
-auto path = std::make_shared<pathplanner::PathPlannerPath>(
-    waypoints,
-    constraints,
-    std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
-    pathplanner::GoalEndState(0.0_mps, frc::Rotation2d(-90_deg)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
-);
+// // Create a vector of waypoints from poses. Each pose represents one waypoint.
+// // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+// std::vector<frc::Pose2d> poses{
+//     frc::Pose2d(1.0_m, 1.0_m, frc::Rotation2d(0_deg)),
+//     frc::Pose2d(3.0_m, 1.0_m, frc::Rotation2d(0_deg)),
+//     frc::Pose2d(5.0_m, 3.0_m, frc::Rotation2d(90_deg))
+// };
+// std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
 
-// Prevent the path from being flipped if the coordinates are already correct
-path->preventFlipping = true;
+// pathplanner::PathConstraints constraints(3.0_mps, 3.0_mps_sq, 360_deg_per_s, 720_deg_per_s_sq); // The constraints for this path.
+// // PathConstraints constraints = PathConstraints::unlimitedConstraints(12_V); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
 
-return path;
-}
+// // Create the path using the waypoints created above
+// // We make a shared pointer here since the path following commands require a shared pointer
+// auto path = std::make_shared<pathplanner::PathPlannerPath>(
+//     waypoints,
+//     constraints,
+//     std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
+//     pathplanner::GoalEndState(0.0_mps, frc::Rotation2d(-90_deg)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+// );
+
+// // Prevent the path from being flipped if the coordinates are already correct
+// path->preventFlipping = true;
+
+// return path;
+// }

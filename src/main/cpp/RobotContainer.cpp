@@ -34,6 +34,10 @@
 #include <stdexcept>
 #include <iostream>
 
+#include <pathplanner/lib/auto/NamedCommands.h>
+#include <memory>
+
+
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
@@ -57,6 +61,16 @@ RobotContainer::RobotContainer() {
             true);
       },
       {&m_drive}));
+
+   pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower));
+   pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower));
+   pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
+   pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, IntakeConstants::kIntakeVelocity));
+   pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+   pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+
+    m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+    frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
@@ -64,92 +78,38 @@ void RobotContainer::ConfigureButtonBindings() {
 //                        frc::XboxController::Button::kRightBumper)
 //       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
+    
     m_driverController.RightBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.SetX(); }, {&m_drive}));
 
     // Arm Deploy
-    m_driverController.A().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kDeloyedPositon, -IntakeConstants::kArmMovementPower).ToPtr());
+    m_driverController.A().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower).ToPtr());
     // Arm Stow
-    m_driverController.B().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kStowedPosition, IntakeConstants::kArmMovementPower).ToPtr());
+    m_driverController.B().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower).ToPtr());
 
     // Shoot
     (!m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kVelocity, TowerConstants::kPower).ToPtr());
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity).ToPtr());
     // Shoot Reverse
     (m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kVelocity, -TowerConstants::kPower).ToPtr());
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kShooterVelocity, -TowerConstants::kTowerVelocity).ToPtr());
 
     // Intake
     (!m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kIntakePower).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kIntakeVelocity).ToPtr());
 
     // Intake Reverse
     (m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kIntakePower).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kIntakeVelocity).ToPtr());
 
 }
 
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() 
+frc2::Command* RobotContainer::GetAutonomousCommand() 
 {
-    try
-    {
-        pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
 
-        // Configure the AutoBuilder last
-        pathplanner::AutoBuilder::configure(
-            // Robot pose supplier  
-            [this]()
-            {
-                return m_drive.GetPose();
-            },
-            // Method to reset odometry (will be called if your auto has a starting pose)
-            [this](const frc::Pose2d& pose)
-            { 
-                m_drive.ResetOdometry(pose); 
-            },
-            // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            [this]()
-            {
-                return m_drive.GetRelativeChassisSpeeds();
-            },
-            // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            [this](const frc::ChassisSpeeds& speeds)
-            { 
-                units::meters_per_second_t xSpeed = speeds.vx;
-                units::meters_per_second_t ySpeed = speeds.vy;
-                units::radians_per_second_t rot = speeds.omega;
+    // // An example trajectory to follow.  All units in meters.
+    // std::string filepath = "Simple Auto";
+    // return pathplanner::PathPlannerAuto(filepath).ToPtr();
 
-                m_drive.Drive(xSpeed, ySpeed, rot, false); 
-            },
-            // PPHolonomicController is the built in path following controller for holonomic drive trains
-            std::make_shared<pathplanner::PPHolonomicDriveController>
-            ( 
-                pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
-                pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
-            ),
-            // The robot configuration
-            config,
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
-            // This will flip the path being followed to the red side of the field.
-            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
-            []() 
-            {
-                auto alliance = frc::DriverStation::GetAlliance();
-                if (alliance) 
-                    return alliance.value() == frc::DriverStation::Alliance::kRed;
-                    
-                return false;
-            },
-            // Reference to this subsystem to set requirements
-            &m_drive
-        );        
-
-        // An example trajectory to follow.  All units in meters.
-        std::string filepath = "Simple Auto";
-        return pathplanner::PathPlannerAuto(filepath).ToPtr();
-    }
-    catch(std::exception& e) 
-    {
-        std::cout << e.what();
-    }
+    return m_autoChooser.GetSelected();
 }

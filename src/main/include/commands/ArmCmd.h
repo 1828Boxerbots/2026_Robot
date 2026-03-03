@@ -28,5 +28,5 @@ class ArmCmd : public frc2::CommandHelper<frc2::Command, ArmCmd>
 
   bool m_isFinished;
   double m_targetPosition;
-  double m_intakeSpeed;
+  double m_intakePower;
 };

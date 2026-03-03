@@ -47,6 +47,7 @@ constexpr double kRearLeftChassisAngularOffset = std::numbers::pi;
 constexpr double kRearRightChassisAngularOffset = std::numbers::pi / 2;
 
 // SPARK MAX CAN IDs
+// CAN IDs ARE NOT FOR THE COMP ROBOT
 constexpr int kFrontLeftDrivingCanId = 7; 
 constexpr int kRearLeftDrivingCanId = 10;
 constexpr int kFrontRightDrivingCanId = 4;
@@ -57,6 +58,8 @@ constexpr int kRearLeftTurningCanId = 9;
 constexpr int kFrontRightTurningCanId = 5; 
 constexpr int kRearRightTurningCanId = 11;
 }  // namespace DriveConstants
+
+  // namespace DriveConstants
 
 namespace ModuleConstants {
 // The MAXSwerve module can be configured with one of three pinion gears: 12T,
@@ -95,7 +98,6 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
 
 
 
-
 }  // namespace AutoConstants
 
 namespace OIConstants {
@@ -106,11 +108,13 @@ constexpr double kDriveDeadband = 0.05;
 namespace IntakeConstants
 {
     // Ports
-    inline constexpr int kIntakeMotorPort = 3;
+    inline constexpr int kIntakeMotorPort = 11;
 
     // Speeds
-    inline constexpr int kIntakePower = 0.5;
-    inline constexpr int kArmMovementPower = 0.5;
+    inline constexpr double kIntakeVelocity = 4.0;
+
+    //Power
+    inline constexpr double kIntakePower = 0.5;
 
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -119,13 +123,13 @@ namespace IntakeConstants
 
 namespace ArmConstants
 {
-    // Ports
-    inline constexpr int kLeftArmMotorPort = 8; 
-    inline constexpr int kRightArmMotorPort = 2; 
+      // Ports
+    inline constexpr int kLeftArmMotorPort = 8; // Left
+    inline constexpr int kRightArmMotorPort = 2; // Right
 
     // Encoder Values in Degrees
     inline constexpr int kStowedPosition = 0;
-    inline constexpr int kDeloyedPositon = 130; // 13pi/18 in rad
+    inline constexpr int kDeployedPosition = 130; // 13pi/18 in rad
 
     // Other Konstants
     inline constexpr double kPositionTolerance = 20.0;
@@ -134,11 +138,12 @@ namespace ArmConstants
 
 namespace TowerConstants
 {
+  
     //  Ports
     inline constexpr int kTowerMotorPort = 14;
     
     // Other Knostants
-    inline constexpr double kPower = 0.5;
+    inline constexpr double kTowerVelocity = 2.0;
     
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -147,17 +152,25 @@ namespace TowerConstants
 
 namespace ShooterConstants
 {
-    //  Ports
-    inline constexpr int kLeftShooterMotorPort = 15;
-    inline constexpr int kRightShooterMotorPort = 13;
+     //  Ports
+    inline constexpr int kLeftShooterMotorPort = 15; // Left 
+    inline constexpr int kRightShooterMotorPort = 13; // Right
     
     // Other Knostants
-    inline constexpr double kVelocity = 5.0;
+    inline constexpr double kShooterVelocity = 5.0;
     
     inline constexpr double kWheelDiameter = 0.1016; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
     
 } // namespace ShooterConstants
+
+namespace OdometryConstants
+{
+    //Put the cordinate locations of actual field points here, such as the locations of the hub, the loading station, and the starting positions. This will be used for auto and for field-relative driving.
+    //ex:
+   // inline constexpr frc::Pose2d kCool = frc::Pose2d(1.365_m, 5.938_m, frc::Rotation2d(180_deg));
+
+} //Odometry Constants
 
 namespace OtherConstants
 {

@@ -35,7 +35,8 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+  frc2::Command* GetAutonomousCommand();
+
 
  private:
   // The driver's controller
@@ -53,7 +54,7 @@ class RobotContainer {
 
 
   // The chooser for the autonomous routines
-  frc::SendableChooser<frc2::Command*> m_chooser;
+  frc::SendableChooser<frc2::Command*> m_autoChooser;
 
   void ConfigureButtonBindings();
 };
