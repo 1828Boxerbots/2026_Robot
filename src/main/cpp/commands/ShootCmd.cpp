@@ -18,7 +18,7 @@
 void ShootCmd::Initialize()
 {
   m_shootSubsystem->SetVelocity(m_shootSpeed);
-  m_towerSubsystem->SetVelocity(m_towerSpeed);
+  m_towerSubsystem->SetPower(m_towerSpeed);
 }
 
 void ShootCmd::Execute()
@@ -29,7 +29,7 @@ void ShootCmd::Execute()
 void ShootCmd::End(bool interupted)
 {
   m_shootSubsystem->SetVelocity(0);
-  m_towerSubsystem->SetVelocity(0);
+  m_towerSubsystem->SetPower(0);
 }
 
 bool ShootCmd::IsFinished()

@@ -5,25 +5,31 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <iostream>
 
-ArmCmd::ArmCmd(ArmSub *subsystem, double pos)
+ArmCmd::ArmCmd(ArmSub *armSubsystem, IntakeSub *intakeSubsystem, double pos, double intakeSpeed)
 {
-  m_subsystem = subsystem;
-  AddRequirements(m_subsystem);
+  m_armSubsystem = armSubsystem;
+  m_intakeSubsystem = intakeSubsystem;
+
+  AddRequirements(m_armSubsystem);
+  AddRequirements(m_intakeSubsystem);
   
   m_targetPosition = pos;
+  m_intakeSpeed = intakeSpeed;
 }
 
 void ArmCmd::Initialize()
 {
-  m_subsystem->SetPos(m_targetPosition);
+  m_armSubsystem->SetPos(m_targetPosition);
 
   m_isFinished = false;
 }
 
 void ArmCmd::Execute()
 {
-  m_isFinished = (CompareDoubles(m_subsystem->GetPos1(), m_targetPosition, ArmConstants::kPositionTolerance)
-    && CompareDoubles(m_subsystem->GetPos2(), m_targetPosition, ArmConstants::kPositionTolerance));
+  m_intakeSubsystem->SetPower(m_intakeSpeed);
+
+  m_isFinished = (CompareDoubles(m_armSubsystem->GetPos1(), m_targetPosition, ArmConstants::kPositionTolerance)
+    && CompareDoubles(m_armSubsystem->GetPos2(), m_targetPosition, ArmConstants::kPositionTolerance));
 }
 
 void ArmCmd::End(bool interupted)

@@ -7,6 +7,7 @@ ArmSub::ArmSub()
 {
     m_rotationFactor = 360;
 
+    // PLEASE CHANGE NAMING OF CONFIGS
     rev::spark::SparkMaxConfig armConfig1{};
     armConfig1.absoluteEncoder
         .Inverted(true)
@@ -25,47 +26,47 @@ ArmSub::ArmSub()
         .Pid(1, 0, 0)
         .OutputRange(-1, 1);
 
-    m_armMotor1.Configure(armConfig1,
+    m_leftArmMotor.Configure(armConfig1,
         rev::spark::SparkBase::ResetMode::kResetSafeParameters,
         rev::spark::SparkBase::PersistMode::kPersistParameters);
     
-    m_armMotor2.Configure(armConfig2,
+    m_rightArmMotor.Configure(armConfig2,
         rev::spark::SparkBase::ResetMode::kResetSafeParameters,
         rev::spark::SparkBase::PersistMode::kPersistParameters);
 
-    m_armMotor1.SetInverted(false);
-    m_armMotor2.SetInverted(true);
+    m_leftArmMotor.SetInverted(false);
+    m_rightArmMotor.SetInverted(true);
 }
 
 ArmSub::~ArmSub() {}
 
 void ArmSub::Periodic()
 {
-    frc::SmartDashboard::PutNumber("Arm Motor 1 Power", m_armMotor1.Get());
-    frc::SmartDashboard::PutNumber("Arm Motor 2 Power", m_armMotor2.Get());
-    frc::SmartDashboard::PutNumber("Arm Encoder 1 Position", m_absArmEncoder1.GetPosition());
-    frc::SmartDashboard::PutNumber("Arm Encoder 2 Position", m_absArmEncoder2.GetPosition());
-    frc::SmartDashboard::PutNumber("Arm PID 1 Set Position", m_armPid1.GetSetpoint());
-    frc::SmartDashboard::PutNumber("Arm PID 2 Set Position", m_armPid2.GetSetpoint());
+    frc::SmartDashboard::PutNumber("Arm Motor 1 Power", m_leftArmMotor.Get());
+    frc::SmartDashboard::PutNumber("Arm Motor 2 Power", m_rightArmMotor.Get());
+    frc::SmartDashboard::PutNumber("Arm Encoder 1 Position", m_leftAbsArmEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Arm Encoder 2 Position", m_rightAbsArmEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Arm PID 1 Set Position", m_leftArmPid.GetSetpoint());
+    frc::SmartDashboard::PutNumber("Arm PID 2 Set Position", m_rightArmPid.GetSetpoint());
 }
 
 void ArmSub::SimulationPeriodic()
 {
     
 }
-
+ // PLEASE CHANGE NAME TO LEFT AND RIGHT
 double ArmSub::GetPos1()
 {
-    return double (m_absArmEncoder1.GetPosition());
+    return double (m_leftAbsArmEncoder.GetPosition());
 }
 
 double ArmSub::GetPos2()
 {
-    return double (m_absArmEncoder2.GetPosition());
+    return double (m_rightAbsArmEncoder.GetPosition());
 }
 
 void ArmSub::SetPos(double pos)
 {
-    m_armPid1.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
-    m_armPid2.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
+    m_leftArmPid.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
+    m_rightArmPid.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
 }

@@ -19,7 +19,7 @@ class IntakeSub : public frc2::SubsystemBase {
 
     void SetVelocity(float velocity);
 
-    void Set(float power);
+    void SetPower(float power);
 
     double GetVelocity();
 

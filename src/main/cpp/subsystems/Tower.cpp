@@ -45,3 +45,8 @@ double TowerSub::GetVelocity()
 
     return towerVelocity;
 }
+
+void TowerSub::SetPower(float power)
+{
+    m_towerMotor.Set(power);
+}

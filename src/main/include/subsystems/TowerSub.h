@@ -19,6 +19,8 @@ class TowerSub : public frc2::SubsystemBase {
 
   double GetVelocity();
 
+  void SetPower(float power);
+
  private:
   rev::spark::SparkMax m_towerMotor{TowerConstants::kTowerMotorPort, rev::spark::SparkMax::MotorType::kBrushless};
   rev::spark::SparkRelativeEncoder m_towerEncoder = m_towerMotor.GetEncoder();

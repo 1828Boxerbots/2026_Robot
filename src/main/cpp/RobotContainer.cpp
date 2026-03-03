@@ -67,24 +67,24 @@ void RobotContainer::ConfigureButtonBindings() {
     m_driverController.RightBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.SetX(); }, {&m_drive}));
 
     // Arm Deploy
-    m_driverController.A().OnTrue(ArmCmd(&m_arm, ArmConstants::kDeloyedPositon).ToPtr());
+    m_driverController.A().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kDeloyedPositon, -IntakeConstants::kArmMovementPower).ToPtr());
     // Arm Stow
-    m_driverController.B().OnTrue(ArmCmd(&m_arm, ArmConstants::kStowedPosition).ToPtr());
+    m_driverController.B().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kStowedPosition, IntakeConstants::kArmMovementPower).ToPtr());
 
     // Shoot
     (!m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kVelocity, TowerConstants::kVelocity).ToPtr());
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kVelocity, TowerConstants::kPower).ToPtr());
     // Shoot Reverse
     (m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kVelocity, -TowerConstants::kVelocity).ToPtr());
+    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kVelocity, -TowerConstants::kPower).ToPtr());
 
     // Intake
     (!m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kVelocity).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kIntakePower).ToPtr());
 
     // Intake Reverse
     (m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kVelocity).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kIntakePower).ToPtr());
 
 }
 

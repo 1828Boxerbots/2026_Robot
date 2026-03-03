@@ -47,16 +47,15 @@ constexpr double kRearLeftChassisAngularOffset = std::numbers::pi;
 constexpr double kRearRightChassisAngularOffset = std::numbers::pi / 2;
 
 // SPARK MAX CAN IDs
-// CAN IDs ARE NOT FOR THE COMP ROBOT
-constexpr int kFrontLeftDrivingCanId = 10;
-constexpr int kRearLeftDrivingCanId = 8;
-constexpr int kFrontRightDrivingCanId = 2;
-constexpr int kRearRightDrivingCanId = 4;
+constexpr int kFrontLeftDrivingCanId = 7; 
+constexpr int kRearLeftDrivingCanId = 10;
+constexpr int kFrontRightDrivingCanId = 4;
+constexpr int kRearRightDrivingCanId = 12;
 
-constexpr int kFrontLeftTurningCanId = 9;
-constexpr int kRearLeftTurningCanId = 7;
-constexpr int kFrontRightTurningCanId = 3;
-constexpr int kRearRightTurningCanId = 5;
+constexpr int kFrontLeftTurningCanId = 6; 
+constexpr int kRearLeftTurningCanId = 9;
+constexpr int kFrontRightTurningCanId = 5; 
+constexpr int kRearRightTurningCanId = 11;
 }  // namespace DriveConstants
 
 namespace ModuleConstants {
@@ -107,10 +106,11 @@ constexpr double kDriveDeadband = 0.05;
 namespace IntakeConstants
 {
     // Ports
-    inline constexpr int kIntakeMotorPort = 11;
+    inline constexpr int kIntakeMotorPort = 3;
 
     // Speeds
-    inline constexpr int kVelocity = 4.0;
+    inline constexpr int kIntakePower = 0.5;
+    inline constexpr int kArmMovementPower = 0.5;
 
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -120,8 +120,8 @@ namespace IntakeConstants
 namespace ArmConstants
 {
     // Ports
-    inline constexpr int kArmMotorAPort = 12;
-    inline constexpr int kArmMotorBPort = 13;
+    inline constexpr int kLeftArmMotorPort = 8; 
+    inline constexpr int kRightArmMotorPort = 2; 
 
     // Encoder Values in Degrees
     inline constexpr int kStowedPosition = 0;
@@ -138,7 +138,7 @@ namespace TowerConstants
     inline constexpr int kTowerMotorPort = 14;
     
     // Other Knostants
-    inline constexpr double kVelocity = 2.0;
+    inline constexpr double kPower = 0.5;
     
     inline constexpr double kWheelDiameter = 0.0508; // value is in meters
     inline constexpr double kMotorReduction = 1.0;
@@ -148,8 +148,8 @@ namespace TowerConstants
 namespace ShooterConstants
 {
     //  Ports
-    inline constexpr int kShooterMotorAPort = 15;
-    inline constexpr int kShooterMotorBPort = 16;
+    inline constexpr int kLeftShooterMotorPort = 15;
+    inline constexpr int kRightShooterMotorPort = 13;
     
     // Other Knostants
     inline constexpr double kVelocity = 5.0;

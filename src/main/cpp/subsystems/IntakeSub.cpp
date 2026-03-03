@@ -20,9 +20,9 @@ IntakeSub::IntakeSub()
         .OutputRange(-1, 1)
         .VelocityFF(velocityFeedForward);
 
-    m_intakeMotor.Configure(intakeConfig,
-        rev::spark::SparkBase::ResetMode::kResetSafeParameters,
-        rev::spark::SparkBase::PersistMode::kPersistParameters);
+    // m_intakeMotor.Configure(intakeConfig,
+    //     rev::spark::SparkBase::ResetMode::kResetSafeParameters,
+    //     rev::spark::SparkBase::PersistMode::kPersistParameters);
 }
 
 IntakeSub::~IntakeSub() {}
@@ -44,7 +44,7 @@ double IntakeSub::GetVelocity()
     return m_intakeEncoder.GetVelocity();
 }
 
-void IntakeSub::Set(float power)
+void IntakeSub::SetPower(float power)
 {
     m_intakeMotor.Set(power);
 }
