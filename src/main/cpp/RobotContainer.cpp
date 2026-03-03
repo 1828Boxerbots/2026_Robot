@@ -34,9 +34,6 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <pathplanner/lib/auto/NamedCommands.h>
-#include <memory>
-
 
 using namespace DriveConstants;
 
@@ -44,7 +41,7 @@ RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
 
   // Configure the button bindings
-  ConfigureButtonBindings();
+
 
   // Set up default drive command
   // The left stick controls translation of the robot.
@@ -68,6 +65,10 @@ RobotContainer::RobotContainer() {
    pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, IntakeConstants::kIntakeVelocity));
    pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
    pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+
+
+    ConfigureButtonBindings();
+
 
     m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
     frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
