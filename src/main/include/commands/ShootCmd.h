@@ -25,4 +25,5 @@ class ShootCmd : public frc2::CommandHelper<frc2::Command, ShootCmd>
   double m_shootSpeed = 0;
   double m_towerSpeed = 0;
   bool m_isFinished = false;
+  double m_tolerance;
 };

@@ -4,6 +4,9 @@
 
 ShooterSub::ShooterSub()
 {
+    double pConstant = 0.01;
+    double ffConstnat = 0.033;
+
     // PLEASE CHANGE NAME OF CONFIGS
     m_conversionFactor = ShooterConstants::kWheelDiameter *
         std::numbers::pi /
@@ -16,19 +19,19 @@ ShooterSub::ShooterSub()
     shooterConfig1.encoder
         .VelocityConversionFactor(m_conversionFactor / 60);
     shooterConfig1.closedLoop
-        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
-        .Pid(1, 0, 0)
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
+        .Pid(pConstant, 0, 0)
         .OutputRange(-1, 1)
-        .VelocityFF(velocityFeedForward);
+        .VelocityFF(ffConstnat);
 
     rev::spark::SparkMaxConfig shooterConfig2{};
     shooterConfig2.encoder
         .VelocityConversionFactor(m_conversionFactor / 60);
     shooterConfig2.closedLoop
-        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
-        .Pid(1, 0, 0)
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
+        .Pid(pConstant, 0, 0)
         .OutputRange(-1, 1)
-        .VelocityFF(velocityFeedForward);
+        .VelocityFF(ffConstnat);
 
     m_leftShooterMotor.Configure(shooterConfig1,
         rev::spark::SparkBase::ResetMode::kResetSafeParameters,
@@ -38,8 +41,8 @@ ShooterSub::ShooterSub()
         rev::spark::SparkBase::ResetMode::kResetSafeParameters,
         rev::spark::SparkBase::PersistMode::kPersistParameters);
     
-    m_leftShooterMotor.SetInverted(false);
-    m_rightShooterMotor.SetInverted(true);
+    m_leftShooterMotor.SetInverted(true);
+    m_rightShooterMotor.SetInverted(false);
 }
 
 ShooterSub::~ShooterSub() {}
@@ -52,12 +55,17 @@ void ShooterSub::Periodic()
     frc::SmartDashboard::PutNumber("Shooter Encoder 2 Velocity", m_rightShooterEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("Shooter PID 1 Set Position", m_leftShooterPid.GetSetpoint());
     frc::SmartDashboard::PutNumber("Shooter PID 2 Set Position", m_rightShooterPid.GetSetpoint());
+    frc::SmartDashboard::PutNumber("Shooter Left Inverted", m_leftShooterMotor.GetInverted());
+    frc::SmartDashboard::PutNumber("Shooter Right Inverted", m_rightShooterMotor.GetInverted());
 }
 
 void ShooterSub::SetVelocity(float velocity)
 {
     m_leftShooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
     m_rightShooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+
+    // m_leftShooterMotor.Set(0.2);
+    // m_rightShooterMotor.Set(0.2);
 }
 
 std::pair<double, double> ShooterSub::GetVelocity()
@@ -66,4 +74,15 @@ std::pair<double, double> ShooterSub::GetVelocity()
     double motor2Velocity = m_rightShooterEncoder.GetVelocity();
 
     return std::pair<double, double>(motor1Velocity, motor2Velocity);
+}
+
+double ShooterSub::GetLeftVelocity()
+{
+    return m_leftShooterEncoder.GetVelocity();
+}
+
+void ShooterSub::SetPower(float power)
+{
+    m_leftShooterMotor.Set(0.2);
+    m_rightShooterMotor.Set(0.2);
 }

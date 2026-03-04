@@ -59,12 +59,12 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 
-   pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower));
-   pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower));
-   pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
-   pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, IntakeConstants::kIntakeVelocity));
-   pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
-   pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+//    pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower));
+//    pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower));
+//    pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
+//    pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, IntakeConstants::kIntakeVelocity));
+//    pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+//    pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
 
 
     ConfigureButtonBindings();
@@ -80,27 +80,28 @@ void RobotContainer::ConfigureButtonBindings() {
 //       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
     
-    m_driverController.RightBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.SetX(); }, {&m_drive}));
+    m_driverController.RightBumper().WhileTrue(new frc2::RunCommand([this]{m_drive.SetX(); }, {&m_drive}));
 
-    // Arm Deploy
-    m_driverController.A().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower).ToPtr());
-    // Arm Stow
-    m_driverController.B().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower).ToPtr());
+    // // Arm Deploy
+    // m_driverController.A().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower).ToPtr());
+    // // Arm Stow
+    // m_driverController.B().OnTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower).ToPtr());
 
     // Shoot
-    (!m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity).ToPtr());
-    // Shoot Reverse
-    (m_driverController.LeftBumper()
-    && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kShooterVelocity, -TowerConstants::kTowerVelocity).ToPtr());
+    // (!m_driverController.LeftBumper()
+    // && 
+    (m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity).ToPtr());
+    // // Shoot Reverse
+    // (m_driverController.LeftBumper()
+    // && m_driverController.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kShooterVelocity, -TowerConstants::kTowerVelocity).ToPtr());
 
-    // Intake
-    (!m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kIntakeVelocity).ToPtr());
+    // // Intake
+    // (!m_driverController.LeftBumper()
+    // && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kIntakeVelocity).ToPtr());
 
-    // Intake Reverse
-    (m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kIntakeVelocity).ToPtr());
+    // // Intake Reverse
+    // (m_driverController.LeftBumper()
+    // && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kIntakeVelocity).ToPtr());
 
 }
 

@@ -15,7 +15,7 @@ IntakeSub::IntakeSub()
     intakeConfig.encoder
         .VelocityConversionFactor(m_conversionFactor / 60);
     intakeConfig.closedLoop
-        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
         .Pid(1, 0, 0)
         .OutputRange(-1, 1)
         .VelocityFF(velocityFeedForward);

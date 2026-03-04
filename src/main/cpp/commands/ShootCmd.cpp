@@ -13,17 +13,23 @@
   m_towerSpeed = towerSpeed;
   AddRequirements(m_shootSubsystem);
   AddRequirements(m_towerSubsystem);
+
+  m_tolerance = 0.001;
 }
 
 void ShootCmd::Initialize()
 {
   m_shootSubsystem->SetVelocity(m_shootSpeed);
-  m_towerSubsystem->SetPower(m_towerSpeed);
 }
 
 void ShootCmd::Execute()
 {
-    
+  if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSpeed + m_tolerance)) && (m_shootSubsystem->GetLeftVelocity() > (m_shootSpeed - m_tolerance)))
+  {
+    m_towerSubsystem->SetPower(m_towerSpeed);
+  }
+  
+    std::cout << m_shootSpeed << std::endl;
 }
 
 void ShootCmd::End(bool interupted)
@@ -34,5 +40,5 @@ void ShootCmd::End(bool interupted)
 
 bool ShootCmd::IsFinished()
 {
-    return false;
+  return false;
 }

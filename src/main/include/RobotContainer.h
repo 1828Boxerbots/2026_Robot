@@ -51,9 +51,9 @@ class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_drive;
-  VisionSub m_Vision;
-  IntakeSub m_intake;
-  ArmSub m_arm;
+  // VisionSub m_Vision;
+  // IntakeSub m_intake;
+  // ArmSub m_arm;
   TowerSub  m_tower;
   ShooterSub m_shooter;
 

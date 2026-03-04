@@ -15,14 +15,16 @@ TowerSub::TowerSub()
     towerConfig.encoder
         .VelocityConversionFactor(m_conversionFactor / 60);
     towerConfig.closedLoop
-        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+        .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
         .Pid(1, 0, 0)
         .OutputRange(-1, 1)
         .VelocityFF(velocityFeedForward);
 
-    m_towerMotor.Configure(towerConfig,
-        rev::spark::SparkBase::ResetMode::kResetSafeParameters,
-        rev::spark::SparkBase::PersistMode::kPersistParameters);
+    // m_towerMotor.Configure(towerConfig,
+    //     rev::spark::SparkBase::ResetMode::kResetSafeParameters,
+    //     rev::spark::SparkBase::PersistMode::kPersistParameters);
+
+    m_towerMotor.SetInverted(true);
 }
 
 TowerSub::~TowerSub() {}

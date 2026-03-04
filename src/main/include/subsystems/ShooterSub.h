@@ -7,6 +7,7 @@
 #include <rev/SparkMax.h>
 #include <rev/config/SparkMaxConfig.h>
 #include <rev/SparkClosedLoopController.h>
+#include <rev/RelativeEncoder.h>
 
 class ShooterSub : public frc2::SubsystemBase {
  public:
@@ -17,7 +18,11 @@ class ShooterSub : public frc2::SubsystemBase {
 
   void SetVelocity(float velocity);
 
+  void SetPower(float power);
+
   std::pair<double, double> GetVelocity();
+
+  double GetLeftVelocity();
 
  private:
   rev::spark::SparkMax m_leftShooterMotor{ShooterConstants::kLeftShooterMotorPort, rev::spark::SparkMax::MotorType::kBrushless};

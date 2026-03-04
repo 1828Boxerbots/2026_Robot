@@ -6,6 +6,8 @@
 ArmSub::ArmSub()
 {
     m_rotationFactor = 360;
+    double pConstant = 0.01;
+    double iConstant = 0.0;
 
     // PLEASE CHANGE NAMING OF CONFIGS
     rev::spark::SparkMaxConfig armConfig1{};
@@ -14,7 +16,7 @@ ArmSub::ArmSub()
         .PositionConversionFactor(m_rotationFactor);
     armConfig1.closedLoop
         .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
-        .Pid(1, 0, 0)
+        .Pid(pConstant, iConstant, 0)
         .OutputRange(-1, 1);
 
     rev::spark::SparkMaxConfig armConfig2{};
@@ -23,7 +25,7 @@ ArmSub::ArmSub()
         .PositionConversionFactor(m_rotationFactor);
     armConfig2.closedLoop
         .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
-        .Pid(1, 0, 0)
+        .Pid(pConstant, iConstant, 0)
         .OutputRange(-1, 1);
 
     m_leftArmMotor.Configure(armConfig1,
