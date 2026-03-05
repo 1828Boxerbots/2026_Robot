@@ -14,7 +14,7 @@
   AddRequirements(m_shootSubsystem);
   AddRequirements(m_towerSubsystem);
 
-  m_tolerance = 0.001;
+  m_tolerance = 0.9;
 }
 
 void ShootCmd::Initialize()
@@ -24,7 +24,8 @@ void ShootCmd::Initialize()
 
 void ShootCmd::Execute()
 {
-  if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSpeed + m_tolerance)) && (m_shootSubsystem->GetLeftVelocity() > (m_shootSpeed - m_tolerance)))
+  if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSpeed + m_tolerance)) 
+    && (m_shootSubsystem->GetLeftVelocity() > (m_shootSpeed - m_tolerance)))
   {
     m_towerSubsystem->SetPower(m_towerSpeed);
   }

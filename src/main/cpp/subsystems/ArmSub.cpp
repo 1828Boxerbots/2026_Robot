@@ -5,36 +5,76 @@
 
 ArmSub::ArmSub()
 {
-    m_rotationFactor = 360;
-    double pConstant = 0.01;
-    double iConstant = 0.0;
-
-    // PLEASE CHANGE NAMING OF CONFIGS
-    rev::spark::SparkMaxConfig armConfig1{};
-    armConfig1.absoluteEncoder
+    rev::spark::SparkMaxConfig armConfig{};
+    armConfig.absoluteEncoder
         .Inverted(true)
         .PositionConversionFactor(m_rotationFactor);
-    armConfig1.closedLoop
+    armConfig.closedLoop
         .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
-        .Pid(pConstant, iConstant, 0)
+        .Pid(0, 0, 0)
         .OutputRange(-1, 1);
 
-    rev::spark::SparkMaxConfig armConfig2{};
-    armConfig2.absoluteEncoder
-        .Inverted(false)
-        .PositionConversionFactor(m_rotationFactor);
-    armConfig2.closedLoop
-        .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
-        .Pid(pConstant, iConstant, 0)
-        .OutputRange(-1, 1);
 
-    m_leftArmMotor.Configure(armConfig1,
-        rev::spark::SparkBase::ResetMode::kResetSafeParameters,
-        rev::spark::SparkBase::PersistMode::kPersistParameters);
+    m_leftArmMotor.Configure(armConfig,
+    rev::spark::SparkBase::ResetMode::kResetSafeParameters,
+    rev::spark::SparkBase::PersistMode::kPersistParameters);
+
+    m_rightArmMotor.Configure(armConfig,
+    rev::spark::SparkBase::ResetMode::kResetSafeParameters,
+    rev::spark::SparkBase::PersistMode::kPersistParameters);
+
+    // m_rotationFactor = 6.84;
+    // double ffStowConstant = 0.15;
+    // double ffDeployContant = 0.05;
+
+    // rev::spark::SparkMaxConfig stowLeftArmConfig{};
+    // stowLeftArmConfig.absoluteEncoder
+    //     .Inverted(true)
+    //     .PositionConversionFactor(m_rotationFactor);
+    // stowLeftArmConfig.closedLoop
+    //     .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+    //     .Pid(0, 0, 0)
+    //     .OutputRange(-1, 1)
+    //     .VelocityFF(ffStowConstant);
+
+    // rev::spark::SparkMaxConfig stowRightArmConfig{};
+    // stowRightArmConfig.absoluteEncoder
+    //     .Inverted(true)
+    //     .PositionConversionFactor(m_rotationFactor);
+    // stowRightArmConfig.closedLoop
+    //     .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+    //     .Pid(0, 0, 0)
+    //     .OutputRange(-1, 1)
+    //     .VelocityFF(ffStowConstant);
+
+    // rev::spark::SparkMaxConfig deployLeftArmConfig{};
+    // deployLeftArmConfig.absoluteEncoder
+    //     .Inverted(false)
+    //     .PositionConversionFactor(m_rotationFactor);
+    // deployLeftArmConfig.closedLoop
+    //     .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+    //     .Pid(0, 0, 0)
+    //     .OutputRange(-1, 1)
+    //     .VelocityFF(ffDeployContant);
+
+    // rev::spark::SparkMaxConfig deployRightArmConfig{};
+    // deployRightArmConfig.absoluteEncoder
+    //     .Inverted(false)
+    //     .PositionConversionFactor(m_rotationFactor);
+    // deployRightArmConfig.closedLoop
+    //     .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
+    //     .Pid(0, 0, 0)
+    //     .OutputRange(-1, 1)
+    //     .VelocityFF(ffDeployContant);
+
+
+    // m_leftArmMotor.Configure(stowLeftArmConfig,
+    //     rev::spark::SparkBase::ResetMode::kResetSafeParameters,
+    //     rev::spark::SparkBase::PersistMode::kPersistParameters);
     
-    m_rightArmMotor.Configure(armConfig2,
-        rev::spark::SparkBase::ResetMode::kResetSafeParameters,
-        rev::spark::SparkBase::PersistMode::kPersistParameters);
+    // m_rightArmMotor.Configure(stowRightArmConfig,
+    //     rev::spark::SparkBase::ResetMode::kResetSafeParameters,
+    //     rev::spark::SparkBase::PersistMode::kPersistParameters);
 
     m_leftArmMotor.SetInverted(false);
     m_rightArmMotor.SetInverted(true);
@@ -69,6 +109,37 @@ double ArmSub::GetPos2()
 
 void ArmSub::SetPos(double pos)
 {
-    m_leftArmPid.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
-    m_rightArmPid.SetReference(pos, rev::spark::SparkMax::ControlType::kPosition);
+    double ffStowConstant = 0.15;
+    double ffDeployConstant = 0.05;
+
+    if(pos == ArmConstants::kStowedPosition)
+    {
+        m_leftArmPid.SetReference(
+            pos, 
+            rev::spark::SparkMax::ControlType::kPosition, 
+            rev::spark::ClosedLoopSlot::kSlot0, 
+            ffStowConstant
+        );
+        m_rightArmPid.SetReference(
+            pos, 
+            rev::spark::SparkMax::ControlType::kPosition, 
+            rev::spark::ClosedLoopSlot::kSlot0, 
+            ffStowConstant
+        );
+    }
+    else
+    {
+        m_leftArmPid.SetReference(
+            pos, 
+            rev::spark::SparkMax::ControlType::kPosition, 
+            rev::spark::ClosedLoopSlot::kSlot0, 
+            ffDeployConstant
+        );
+        m_rightArmPid.SetReference(
+            pos, 
+            rev::spark::SparkMax::ControlType::kPosition, 
+            rev::spark::ClosedLoopSlot::kSlot0, 
+            ffDeployConstant
+        );
+    }
 }

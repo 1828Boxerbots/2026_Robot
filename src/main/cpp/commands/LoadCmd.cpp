@@ -14,7 +14,7 @@ LoadCmd::LoadCmd(IntakeSub *subsystem, double speed)
 
 void LoadCmd::Initialize()
 {
-  m_subsystem->SetVelocity(m_speed);
+  m_subsystem->SetPower(m_speed);
 }
 
 void LoadCmd::Execute()
@@ -24,7 +24,7 @@ void LoadCmd::Execute()
 
 void LoadCmd::End(bool interupted)
 {
-  m_subsystem->SetVelocity(0);
+  m_subsystem->SetPower(0);
 }
 
 bool LoadCmd::IsFinished()
