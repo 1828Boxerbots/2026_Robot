@@ -5,6 +5,9 @@
 
 ArmSub::ArmSub()
 {
+    m_rotationFactor = 6.84;
+    double ffStowConstant = 0.15;
+
     rev::spark::SparkMaxConfig armConfig{};
     armConfig.absoluteEncoder
         .Inverted(true)
@@ -12,7 +15,10 @@ ArmSub::ArmSub()
     armConfig.closedLoop
         .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
         .Pid(0, 0, 0)
-        .OutputRange(-1, 1);
+        .OutputRange(-0.15, 0.15)
+        .PositionWrappingEnabled(true)
+        .PositionWrappingInputRange(0, m_rotationFactor)
+        .VelocityFF(0.5);
 
 
     m_leftArmMotor.Configure(armConfig,
@@ -23,7 +29,6 @@ ArmSub::ArmSub()
     rev::spark::SparkBase::ResetMode::kResetSafeParameters,
     rev::spark::SparkBase::PersistMode::kPersistParameters);
 
-    // m_rotationFactor = 6.84;
     // double ffStowConstant = 0.15;
     // double ffDeployContant = 0.05;
 
@@ -109,37 +114,30 @@ double ArmSub::GetPos2()
 
 void ArmSub::SetPos(double pos)
 {
-    double ffStowConstant = 0.15;
-    double ffDeployConstant = 0.05;
-
     if(pos == ArmConstants::kStowedPosition)
     {
+        // std::cout << "Stow" << std::endl;
+
         m_leftArmPid.SetReference(
             pos, 
-            rev::spark::SparkMax::ControlType::kPosition, 
-            rev::spark::ClosedLoopSlot::kSlot0, 
-            ffStowConstant
+            rev::spark::SparkMax::ControlType::kPosition
         );
         m_rightArmPid.SetReference(
             pos, 
-            rev::spark::SparkMax::ControlType::kPosition, 
-            rev::spark::ClosedLoopSlot::kSlot0, 
-            ffStowConstant
+            rev::spark::SparkMax::ControlType::kPosition
         );
     }
     else
     {
+        // std::cout << "Deploy" << std::endl;
+
         m_leftArmPid.SetReference(
             pos, 
-            rev::spark::SparkMax::ControlType::kPosition, 
-            rev::spark::ClosedLoopSlot::kSlot0, 
-            ffDeployConstant
+            rev::spark::SparkMax::ControlType::kPosition
         );
         m_rightArmPid.SetReference(
             pos, 
-            rev::spark::SparkMax::ControlType::kPosition, 
-            rev::spark::ClosedLoopSlot::kSlot0, 
-            ffDeployConstant
+            rev::spark::SparkMax::ControlType::kPosition
         );
     }
 }

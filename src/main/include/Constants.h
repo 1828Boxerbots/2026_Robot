@@ -131,8 +131,8 @@ namespace ArmConstants
     inline constexpr int kRightArmMotorPort = 2; // Right
 
     // Encoder Values
-    inline constexpr int kStowedPosition = -0.05;
-    inline constexpr int kDeployedPosition = 2;
+    inline constexpr double kStowedPosition = -0.05;
+    inline constexpr double kDeployedPosition = 1;
 
     // Other Konstants
     inline constexpr double kPositionTolerance = 0.1;

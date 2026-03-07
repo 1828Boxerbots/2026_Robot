@@ -19,7 +19,7 @@ ArmCmd::ArmCmd(ArmSub *armSubsystem, IntakeSub *intakeSubsystem, double pos, dou
 
 void ArmCmd::Initialize()
 {
-  // m_armSubsystem->SetPos(m_targetPosition);
+  m_armSubsystem->SetPos(m_targetPosition);
 
   m_isFinished = false;
 }
@@ -28,14 +28,16 @@ void ArmCmd::Execute()
 {
   m_intakeSubsystem->SetPower(m_intakePower);
 
-  // m_isFinished = (CompareDoubles(m_armSubsystem->GetPos1(), m_targetPosition, ArmConstants::kPositionTolerance)
-  //   && CompareDoubles(m_armSubsystem->GetPos2(), m_targetPosition, ArmConstants::kPositionTolerance));
+  m_isFinished = (CompareDoubles(m_armSubsystem->GetPos1(), m_targetPosition, ArmConstants::kPositionTolerance)
+    && CompareDoubles(m_armSubsystem->GetPos2(), m_targetPosition, ArmConstants::kPositionTolerance));
 }
 
 void ArmCmd::End(bool interupted)
 {
   // m_subsystem.
   m_intakeSubsystem->SetPower(0);
+  
+  // TODO: Turn off the PID
 }
 
 bool ArmCmd::IsFinished()
