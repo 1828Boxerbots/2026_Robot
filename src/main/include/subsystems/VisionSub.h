@@ -56,5 +56,7 @@ class VisionSub : public frc2::SubsystemBase {
 
   static double m_shootVelocity;
 
-  nt::DoubleArrayPublisher publisher;
+  // nt::DoubleArrayPublisher publisher;
+
+  std::shared_ptr<nt::NetworkTable> visionTable;
 };

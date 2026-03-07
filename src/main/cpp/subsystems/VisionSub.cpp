@@ -20,9 +20,12 @@ double VisionSub::m_shootVelocity = 0.0;
 VisionSub::VisionSub()
 {
     nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
-    nt::DoubleArrayTopic visionTopic = inst.GetDoubleArrayTopic("/Vision/IDsData");
-    publisher = visionTopic.Publish();
+    // nt::DoubleArrayTopic visionTopic = inst.GetDoubleArrayTopic("/Vision/IDsData");
+    // publisher = visionTopic.Publish();
     // publisher.SetDefault();
+    visionTable = inst.GetTable("Vision");
+
+    visionTable->PutDoubleArray("ID Data", )
 
     std::thread visionThread(
         [&]()
@@ -72,7 +75,7 @@ double VisionSub::GetTagDistance()
     // }
     // else
     // {
-    //     return 0.0;
+        return 0.0;
     // }
     
 }
