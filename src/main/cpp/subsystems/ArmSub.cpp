@@ -15,10 +15,10 @@ ArmSub::ArmSub()
     armConfig.closedLoop
         .SetFeedbackSensor(rev::spark::FeedbackSensor::kAbsoluteEncoder)
         .Pid(0, 0, 0)
-        .OutputRange(-0.15, 0.15)
+        .OutputRange(-1, 0.15)
         .PositionWrappingEnabled(true)
         .PositionWrappingInputRange(0, m_rotationFactor)
-        .VelocityFF(0.5);
+        .VelocityFF(2);
 
 
     m_leftArmMotor.Configure(armConfig,
@@ -140,4 +140,10 @@ void ArmSub::SetPos(double pos)
             rev::spark::SparkMax::ControlType::kPosition
         );
     }
+}
+
+void ArmSub::SetPower(float power)
+{
+    m_leftArmMotor.Set(power);
+    m_rightArmMotor.Set(power);
 }

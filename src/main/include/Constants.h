@@ -115,7 +115,7 @@ namespace IntakeConstants
     // inline constexpr double kIntakeVelocity = 4.0;
 
     //Power
-    inline constexpr double kIntakePower = 0.4;
+    inline constexpr double kIntakePower = 0.6;
     inline constexpr double kIntakePowerDeploy = -0.05;
     inline constexpr double kIntakePowerStow = 0.1;
 

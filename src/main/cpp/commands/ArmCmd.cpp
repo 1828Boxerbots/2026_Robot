@@ -35,10 +35,9 @@ void ArmCmd::Execute()
 void ArmCmd::End(bool interupted)
 {
   // m_subsystem.
-  m_intakeSubsystem->SetPower(0);
-  
-  // TODO: Turn off the PID
-}
+  m_intakeSubsystem->SetPower(0.0);
+  m_armSubsystem->SetPower(0.0);
+} 
 
 bool ArmCmd::IsFinished()
 {
