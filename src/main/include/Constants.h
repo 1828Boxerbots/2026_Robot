@@ -135,7 +135,7 @@ namespace ArmConstants
     inline constexpr double kDeployedPosition = 1;
 
     // Other Konstants
-    inline constexpr double kPositionTolerance = 0.1;
+    inline constexpr double kPositionTolerance = 0.25;
 
 } // namespace ArmConstants
 
