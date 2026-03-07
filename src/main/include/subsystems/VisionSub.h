@@ -17,9 +17,9 @@
 
 struct AprilTagData
 {
-  int id;
   double distance;
   double rot;
+  double shootVelocity;
 };
 
 // template <>
@@ -33,14 +33,11 @@ class VisionSub : public frc2::SubsystemBase {
   VisionSub();
   ~VisionSub();
 
-  void RunCharucoBoardCailbration();
-
-  void RunAprilTagDetection();
-
-  void VisionThread();
+  static void RunCharucoBoardCailbration();
+  static void RunAprilTagDetection();
+  static void VisionThread();
 
   static double GetTagTranslation();
-
   static double GetTagDistance();
 
   /**
@@ -53,10 +50,13 @@ class VisionSub : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
 
   static double m_translationValue;
-
   static double m_shootVelocity;
 
-  // nt::DoubleArrayPublisher publisher;
+  nt::DoubleArrayPublisher publisher;
+  // nt::NetworkTableEntry IdData;
 
   std::shared_ptr<nt::NetworkTable> visionTable;
+  nt::NetworkTableInstance inst;
+
+  static std::map<unsigned int, AprilTagData> m_tagData;
 };
