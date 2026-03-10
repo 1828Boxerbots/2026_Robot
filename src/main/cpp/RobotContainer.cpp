@@ -87,9 +87,9 @@ void RobotContainer::ConfigureButtonBindings() {
       m_driverController.RightBumper().WhileTrue(new frc2::RunCommand([this]{m_drive.SetX(); }, {&m_drive}));
 
     // Arm Deploy
-    m_driverController.A().WhileTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePowerDeploy).ToPtr());
+    m_driverController.A().WhileTrue(ArmCmd(&m_arm, ArmConstants::kDeployedPosition).ToPtr());
     // Arm Stow
-    m_driverController.B().WhileTrue(ArmCmd(&m_arm, &m_intake, ArmConstants::kStowedPosition, IntakeConstants::kIntakePowerStow).ToPtr());
+    m_driverController.B().WhileTrue(ArmCmd(&m_arm, ArmConstants::kStowedPosition).ToPtr());
 
     // Shoot
     (!m_driverController.LeftBumper()
@@ -100,10 +100,10 @@ void RobotContainer::ConfigureButtonBindings() {
 
     // Intake
     (!m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, IntakeConstants::kIntakePower).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, &m_arm, IntakeConstants::kIntakePower).ToPtr());
     // Intake Reverse
     (m_driverController.LeftBumper()
-    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, -IntakeConstants::kIntakePower).ToPtr());
+    && m_driverController.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, &m_arm, -IntakeConstants::kIntakePower).ToPtr());
 
 }
 
