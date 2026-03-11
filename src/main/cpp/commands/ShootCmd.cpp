@@ -30,7 +30,7 @@ void ShootCmd::Execute()
     m_towerSubsystem->SetPower(m_towerSpeed);
   }
   
-    std::cout << m_shootSpeed << std::endl;
+    // std::cout << m_shootSpeed << std::endl;
 }
 
 void ShootCmd::End(bool interupted)
