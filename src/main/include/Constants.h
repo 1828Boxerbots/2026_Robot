@@ -102,7 +102,8 @@ extern const frc::TrapezoidProfile<units::radians>::Constraints
 }  // namespace AutoConstants
 
 namespace OIConstants {
-constexpr int kDriverControllerPort = 0;
+constexpr int kDriverControllerPort0 = 0;
+constexpr int kDriverControllerPort1 = 1;
 constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
 
@@ -115,7 +116,7 @@ namespace IntakeConstants
     // inline constexpr double kIntakeVelocity = 4.0;
 
     //Power
-    inline constexpr double kIntakePower = 0.7;
+    inline constexpr double kIntakePower = 1.0;
     inline constexpr double kIntakePowerDeploy = -0.05;
     inline constexpr double kIntakePowerStow = 0.1;
 

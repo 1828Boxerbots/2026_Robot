@@ -84,58 +84,58 @@ void VisionSub::RunAprilTagDetection()
 
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
-    while (true) {
+    // while (true) {
 
-        if (feed.GrabFrameNoTimeout(frame) == 0)
-        {
-            std::cout << "Error: Didn't grab the frame" << std::endl;
-        }
-        else
-        {
-            std::vector<int> markerIds;
-            std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
-            cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
-            cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
-            cv::aruco::ArucoDetector detector(dictionary, detectorParams);
-            detector.detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);
+    //     if (feed.GrabFrameNoTimeout(frame) == 0)
+    //     {
+    //         std::cout << "Error: Didn't grab the frame" << std::endl;
+    //     }
+    //     else
+    //     {
+    //         std::vector<int> markerIds;
+    //         std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    //         cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+    //         cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+    //         cv::aruco::ArucoDetector detector(dictionary, detectorParams);
+    //         detector.detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);
 
-            size_t nMarkers = markerCorners.size();
-            std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
+    //         size_t nMarkers = markerCorners.size();
+    //         std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
             
-            cv::Mat PosFeed = frame.clone();
+    //         cv::Mat PosFeed = frame.clone();
             
-            if(!markerIds.empty()) {
-                // Calculate pose for each marker
-                // std::cout << objPoints << std::endl << markerCorners.at(0) << std::endl << camMatrix << std::endl << distCoeffs << std::endl;
-                for (size_t i = 0; i < nMarkers; i++) {
-                    solvePnP(objPoints, markerCorners.at(i), camMatrix, distCoeffs, rvecs.at(i), tvecs.at(i));
-                }
+    //         if(!markerIds.empty()) {
+    //             // Calculate pose for each marker
+    //             // std::cout << objPoints << std::endl << markerCorners.at(0) << std::endl << camMatrix << std::endl << distCoeffs << std::endl;
+    //             for (size_t i = 0; i < nMarkers; i++) {
+    //                 solvePnP(objPoints, markerCorners.at(i), camMatrix, distCoeffs, rvecs.at(i), tvecs.at(i));
+    //             }
 
-                for(unsigned int i = 0; i < markerIds.size(); i++)
-                {
+    //             for(unsigned int i = 0; i < markerIds.size(); i++)
+    //             {
 
-                    unsigned int tagId = markerIds[i];
+    //                 unsigned int tagId = markerIds[i];
 
-                    AprilTagData data
-                    {
-                        std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
-                    };
+    //                 AprilTagData data
+    //                 {
+    //                     std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
+    //                 };
 
-                    m_tagData.insert({tagId, data});
+    //                 m_tagData.insert({tagId, data});
                     
-                    cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
-                    cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
+    //                 cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
+    //                 cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
 
-                    if((markerIds[i] == 26) || (markerIds[i] == 10))
-                    {
-                        m_translationValue = tvecs[i](0);
-                    }
-                }
-            }
+    //                 if((markerIds[i] == 26) || (markerIds[i] == 10))
+    //                 {
+    //                     m_translationValue = tvecs[i](0);
+    //                 }
+    //             }
+    //         }
             
-            outputStream.PutFrame(PosFeed);
-        }
-    }
+    //         outputStream.PutFrame(PosFeed);
+    //     }
+    // }
 }
 
 void VisionSub::RunCharucoBoardCailbration()
