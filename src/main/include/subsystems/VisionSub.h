@@ -8,34 +8,25 @@
 #include "Constants.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/shuffleboard/Shuffleboard.h>
+#include <opencv2/objdetect/aruco_detector.hpp>
+#include <opencv2/objdetect/charuco_detector.hpp>
 #include <opencv2/opencv.hpp>
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
 #include <networktables/DoubleArrayTopic.h>
 #include <mutex>
-
-struct AprilTagData
-{
-  double distance;
-  double rot;
-  double shootVelocity;
-};
-
-// template <>
-// struct wpi::Struct<AprilTagData> 
-// {
-//   static constexpr std::
-// };
+#include <thread>
+#include <string>
 
 class VisionSub : public frc2::SubsystemBase {
  public:
   VisionSub();
   ~VisionSub();
 
-  static void RunCharucoBoardCailbration();
-  static void RunAprilTagDetection();
-  static void VisionThread();
+  void RunCharucoBoardCailbration();
+  void RunAprilTagDetection();
+  void VisionThread();
 
   static double GetTagTranslation();
   static double GetTagDistance();
@@ -52,11 +43,14 @@ class VisionSub : public frc2::SubsystemBase {
   static double m_translationValue;
   static double m_shootVelocity;
 
-  nt::DoubleArrayPublisher publisher;
-  // nt::NetworkTableEntry IdData;
+  // std::shared_ptr<nt::NetworkTable> visionTable;
 
-  std::shared_ptr<nt::NetworkTable> visionTable;
-  nt::NetworkTableInstance inst;
+  nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+  double idData[9];
+  // nt::DoubleTopic visionTopic;
+  // nt::DoublePublisher publisher;
 
-  static std::map<unsigned int, AprilTagData> m_tagData;
+  nt::DoublePublisher testPub;
+
+  std::vector<nt::DoubleArrayPublisher> publishers;
 };

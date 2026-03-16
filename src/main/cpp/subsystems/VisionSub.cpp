@@ -3,31 +3,44 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/VisionSub.h"
-#include <thread>
-#include <opencv2/objdetect/aruco_detector.hpp>
-#include <opencv2/opencv.hpp>
-#include <opencv2/objdetect/charuco_detector.hpp>
 #include <cameraserver/CameraServer.h>
-#include <frc/shuffleboard/Shuffleboard.h>
-#include <frc/shuffleboard/ShuffleboardWidget.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <cscore_cv.h>
 
-std::map<unsigned int, AprilTagData> VisionSub::m_tagData;
 double VisionSub::m_translationValue = 0.0;
 double VisionSub::m_shootVelocity = 0.0;
-std::shared_ptr<nt::NetworkTable> visionTable;
+// std::shared_ptr<nt::NetworkTable> visionTable;
 nt::NetworkTableInstance inst;
 
 VisionSub::VisionSub()
 {
-    inst = nt::NetworkTableInstance::GetDefault();
-    // nt::DoubleArrayTopic visionTopic = inst.GetDoubleArrayTopic("/Vision/IDsData");
-    // publisher = visionTopic.Publish();
-    // publisher.SetDefault();
-    visionTable = inst.GetTable("Vision");
+    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+    nt::DoubleTopic testTopic = inst.GetDoubleTopic("/Test/X");
+    testPub = testTopic.Publish();
+    testPub.SetDefault(0.0);
 
     // visionTable->PutDoubleArray("ID Data", 0.0);
+    
+    idData[0] = 0.0; // x
+    idData[1] = 0.0; // y
+    idData[2] = 0.0; // z
+    idData[3] = 0.0; // yaw ?
+    idData[4] = 0.0; // pitch ?
+    idData[5] = 0.0; // roll ?
+    idData[6] = 0.0; // ditance in meters from tag
+    idData[7] = 0.0; // x value for tag to center of frame (Not in distance)
+    idData[8] = 0.0;  // velocity ball leaving shooter needs to be
+
+    // for(int i = 1; i <= 32; i++)
+    {
+        std::string IdString = std::to_string(1);
+        nt::DoubleArrayTopic topic = inst.GetDoubleArrayTopic("/Vision/ID");
+        nt::DoubleArrayPublisher pub = topic.Publish();
+        pub.Set(idData, 0);
+        std::cout << "create network tables" << std::endl;
+
+        publishers.push_back(pub);
+    }
 
     std::thread visionThread(
         [&]()
@@ -144,8 +157,6 @@ void VisionSub::RunAprilTagDetection()
             std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
             
             cv::Mat PosFeed = frame.clone();
-
-            // visionTable.reset();
             
             if(!markerIds.empty()) {
                 // Calculate pose for each marker
@@ -154,31 +165,33 @@ void VisionSub::RunAprilTagDetection()
                     solvePnP(objPoints, markerCorners.at(i), camMatrix, distCoeffs, rvecs.at(i), tvecs.at(i));
                 }
 
-                // for(unsigned int i = 0; i < markerIds.size(); i++)
-                // {
-
-                    // unsigned int tagId = markerIds[i];
-
-                    // AprilTagData data;
-                    // data.distance = 0.0;
-                    // data.rot = 0.0;
-                    // data.shootVelocity = 0.0;
-
-                    // data.distance = std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)));
-                    // data.rot = (tvecs[i](0) / tvecs[i](2));
-
-                    // double m_numeratorCalculation = (VisionConstants::kGravity * (std::pow(data.distance, 2.0)));
-                    // double m_angleCalculation = 2 * (std::pow (cos (VisionConstants::kLaunchAngle), 2));
-                    // double m_heightCalculation = (VisionConstants::kShooterHeight + (data.distance * std::tan(VisionConstants::kLaunchAngle)) - VisionConstants::kHubHeight);
-                    // data.shootVelocity = std::sqrt(m_numeratorCalculation / (m_angleCalculation * m_heightCalculation));
- 
-                    // m_tagData.insert({tagId, data});
+                for(unsigned int i = 0; i < markerIds.size(); i++)
+                {
+                    unsigned int tagId = markerIds[i];
                     
-                    // cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
-                    // cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
-                    // frc::SmartDashboard::PutNumber("Tag Z-axis", tvecs[i](2));
-                    // frc::SmartDashboard::PutNumber("Tag x-axis", tvecs[i](0));
-                    // frc::SmartDashboard::PutNumber("Tag Distnace", data.distance);
+                    cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
+                    cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
+
+
+                    double distance = std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)));
+                    double translationValue = (tvecs[i](0) / tvecs[i](2));
+
+                    double m_numeratorCalculation = (VisionConstants::kGravity * (std::pow(VisionSub::GetTagDistance(), 2.0)));
+                    double m_angleCalculation = 2 * (std::pow (cos (VisionConstants::kLaunchAngle), 2));
+                    double m_heightCalculation = (VisionConstants::kShooterHeight + (VisionSub::GetTagDistance() * std::tan(VisionConstants::kLaunchAngle)) - VisionConstants::kHubHeight);
+                    double shootVelocity = std::sqrt(m_numeratorCalculation / (m_angleCalculation * m_heightCalculation));
+
+                    idData[0] = tvecs[i](0); // x
+                    idData[1] = tvecs[i](1); // y
+                    idData[2] = tvecs[i](2); // z
+                    idData[3] = rvecs[i](0); // yaw ?
+                    idData[4] = rvecs[i](1); // pitch ?
+                    idData[5] = rvecs[i](2); // roll ?
+                    idData[6] = distance; // ditance in meters from tag
+                    idData[7] = translationValue; // x value for tag to center of frame (Not in distance)
+                    idData[8] = shootVelocity; // velocity ball leaving shooter needs to be
+
+                    // inst.GetEntry("Vision/ID" + (i+1)) = idData;
 
                     // if((markerIds[i] == 26) || (markerIds[i] == 10))
                     // {
@@ -195,16 +208,12 @@ void VisionSub::RunAprilTagDetection()
                     //     m_translationValue = 0.0;
                     // }
 
-                    // tagsTable->GetEntry(fmt::format("pose_{}", markerIds[i]))
+                    // visionTable->GetEntry(fmt::format("pose_{}", markerIds[i]))
                     //     .SetDoubleArray ({{m_translationValue, m_shootVelocity}});
                     // table->PutNumber("ID", tagId);
                     // table->PutNumber("shootVelocity", m_shootVelocity);
                     // table->PutNumber("translationValue", m_translationValue);
-
-                    // frc::SmartDashboard::PutNumber("ID from networktable", table->GetNumber("ID", 0.0));
-
-                    // visionTable->PutNumber(std::to_string(markerIds[i]), 0.0); 
-                // }
+                }
             }
             
             outputStream.PutFrame(PosFeed);
