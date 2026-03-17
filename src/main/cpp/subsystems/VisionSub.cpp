@@ -10,17 +10,16 @@
 double VisionSub::m_translationValue = 0.0;
 double VisionSub::m_shootVelocity = 0.0;
 // std::shared_ptr<nt::NetworkTable> visionTable;
-nt::NetworkTableInstance inst;
 
 VisionSub::VisionSub()
 {
-    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+    inst = nt::NetworkTableInstance::GetDefault();
     nt::DoubleTopic testTopic = inst.GetDoubleTopic("/Test/X");
     testPub = testTopic.Publish();
     testPub.SetDefault(0.0);
 
     // visionTable->PutDoubleArray("ID Data", 0.0);
-    
+
     idData[0] = 0.0; // x
     idData[1] = 0.0; // y
     idData[2] = 0.0; // z
@@ -31,16 +30,18 @@ VisionSub::VisionSub()
     idData[7] = 0.0; // x value for tag to center of frame (Not in distance)
     idData[8] = 0.0;  // velocity ball leaving shooter needs to be
 
-    // for(int i = 1; i <= 32; i++)
+    for(int i = 1; i <= 32; i++)
     {
-        std::string IdString = std::to_string(1);
-        nt::DoubleArrayTopic topic = inst.GetDoubleArrayTopic("/Vision/ID");
-        nt::DoubleArrayPublisher pub = topic.Publish();
-        pub.Set(idData, 0);
-        std::cout << "create network tables" << std::endl;
-
-        publishers.push_back(pub);
+        // nt::DoubleArrayTopic topic = inst.GetDoubleArrayTopic("/Vision/ID" + std::to_string(i));
+        // nt::DoubleArrayPublisher pub = topic.Publish();
+        std::string topicName = "/Vision/Id" + std::to_string(i);
+        nt::DoubleArrayPublisher pub = inst.GetDoubleArrayTopic(topicName).Publish();
+        pub.SetDefault(idData);
+        
+        publishers.push_back(std::move(pub));
     }
+
+    
 
     std::thread visionThread(
         [&]()
@@ -54,7 +55,7 @@ VisionSub::~VisionSub()
 {}
 
 // This method will be called once per scheduler run
-void VisionSub::Periodic() 
+void VisionSub::Periodic()
 {
 
 }
@@ -92,19 +93,19 @@ double VisionSub::GetTagDistance()
     // {
         return 0.0;
     // }
-    
+
 }
 
 void VisionSub::RunAprilTagDetection()
 {
-    
-    cv::Mat camMatrix, distCoeffs;
-    cv::FileStorage inputMatrix("/home/lvuser/VisionMatrixConfig.txt", cv::FileStorage::READ);
-    inputMatrix["camera_matrix"] >> camMatrix;
-    inputMatrix.release();
-    cv::FileStorage inputDistortion("/home/lvuser/VisionDistConfig.txt", cv::FileStorage::READ);
-    inputDistortion["distortion_coefficients"] >> distCoeffs;
-    inputDistortion.release();
+
+    // cv::Mat camMatrix, distCoeffs;
+    // cv::FileStorage inputMatrix("/home/lvuser/VisionMatrixConfig.txt", cv::FileStorage::READ);
+    // inputMatrix["camera_matrix"] >> camMatrix;
+    // inputMatrix.release();
+    // cv::FileStorage inputDistortion("/home/lvuser/VisionDistConfig.txt", cv::FileStorage::READ);
+    // inputDistortion["distortion_coefficients"] >> distCoeffs;
+    // inputDistortion.release();
 
         // set coordinate system
     cv::Mat objPoints(4, 1, CV_32FC3);
@@ -128,7 +129,7 @@ void VisionSub::RunAprilTagDetection()
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
     // testPub.Set(1);
-    
+
 
     while (true) {
 
@@ -155,21 +156,21 @@ void VisionSub::RunAprilTagDetection()
 
             size_t nMarkers = markerCorners.size();
             std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
-            
+
             cv::Mat PosFeed = frame.clone();
-            
+
             if(!markerIds.empty()) {
                 // Calculate pose for each marker
                 // std::cout << objPoints << std::endl << markerCorners.at(0) << std::endl << camMatrix << std::endl << distCoeffs << std::endl;
                 for (size_t i = 0; i < nMarkers; i++) {
-                    solvePnP(objPoints, markerCorners.at(i), camMatrix, distCoeffs, rvecs.at(i), tvecs.at(i));
+                    // solvePnP(objPoints, markerCorners.at(i), camMatrix, distCoeffs, rvecs.at(i), tvecs.at(i));
                 }
 
                 for(unsigned int i = 0; i < markerIds.size(); i++)
                 {
                     unsigned int tagId = markerIds[i];
-                    
-                    cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
+
+                    // cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
                     cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
 
 
@@ -190,6 +191,8 @@ void VisionSub::RunAprilTagDetection()
                     idData[6] = distance; // ditance in meters from tag
                     idData[7] = translationValue; // x value for tag to center of frame (Not in distance)
                     idData[8] = shootVelocity; // velocity ball leaving shooter needs to be
+
+                    
 
                     // inst.GetEntry("Vision/ID" + (i+1)) = idData;
 
@@ -215,7 +218,7 @@ void VisionSub::RunAprilTagDetection()
                     // table->PutNumber("translationValue", m_translationValue);
                 }
             }
-            
+
             outputStream.PutFrame(PosFeed);
             // frc::SmartDashboard::PutNumber("Tag Translation", m_translationValue);
 
@@ -229,7 +232,7 @@ void VisionSub::RunAprilTagDetection()
 
 
 void VisionSub::RunCharucoBoardCailbration()
-{   
+{
     cv::Mat board;
     cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
@@ -239,10 +242,10 @@ void VisionSub::RunCharucoBoardCailbration()
     float squareLength = 0.04;
     float markerLength = 0.02;
     cv::aruco::CharucoBoard charucoBoard = cv::aruco::CharucoBoard(cv::Size(squareNumX, squareNumY), squareLength, markerLength, dictionary);
-    
+
     // Collect data from each frame
     std::vector<cv::Mat> allCharucoCorners, allCharucoIds;
-    
+
     std::vector<std::vector<cv::Point2f>> allImagePoints;
     std::vector<std::vector<cv::Point3f>> allObjectPoints;
 
@@ -262,9 +265,9 @@ void VisionSub::RunCharucoBoardCailbration()
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
     bool putingCailbration = true;
-    
+
     do
-    {   
+    {
         std::vector<int> markerIds;
         std::vector<std::vector<cv::Point2f>> markerCorners;
         cv::Mat currentCharucoCorners, currentCharucoIds;
@@ -279,15 +282,15 @@ void VisionSub::RunCharucoBoardCailbration()
         {
             // std::cout << "It works frfr" << std::endl;
             charucoDetector.detectBoard(image, currentCharucoCorners, currentCharucoIds);
-        
+
             cv::Mat outputImage = image.clone();
-        
+
             if (currentCharucoCorners.total() > 3)
             {
                 charucoBoard.matchImagePoints(currentCharucoCorners, currentCharucoIds, currentObjectPoints, currentImagePoints);
                 // std::cout << std::endl << "I CAN SEE" << std::endl << std::endl;
                 cv::aruco::drawDetectedCornersCharuco(outputImage, currentCharucoCorners, currentCharucoIds);
-                if(currentImagePoints.empty() || currentObjectPoints.empty()) 
+                if(currentImagePoints.empty() || currentObjectPoints.empty())
                 {
                     continue;
                 }
@@ -309,16 +312,16 @@ void VisionSub::RunCharucoBoardCailbration()
                     cv::FileStorage outputDistor("/home/lvuser/VisionDistConfig.txt", cv::FileStorage::WRITE);
                     outputDistor << "distortion_coefficients" << distCoeffs;
                     outputDistor.release();
-                    
+
                     cv::FileStorage outputMatrix("/home/lvuser/VisionMatrixConfig.txt", cv::FileStorage::WRITE);
                     outputMatrix << "camera_matrix" << cameraMatrix;
                     outputMatrix.release();
                 }
             }
-        
+
             outputStream.PutFrame(outputImage);
-            
+
         } // for the check if it work
 
-    } while (true); 
+    } while (true);
 }

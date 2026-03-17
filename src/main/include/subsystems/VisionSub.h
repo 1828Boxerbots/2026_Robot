@@ -45,7 +45,7 @@ class VisionSub : public frc2::SubsystemBase {
 
   // std::shared_ptr<nt::NetworkTable> visionTable;
 
-  nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
+  nt::NetworkTableInstance inst;
   double idData[9];
   // nt::DoubleTopic visionTopic;
   // nt::DoublePublisher publisher;
