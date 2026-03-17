@@ -95,7 +95,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
    * Resets the odometry to the specified pose.
    *
    * @param pose The pose to which to set the odometry.
-   */
+   */ 
   void ResetOdometry(frc::Pose2d pose);
 
   frc::SwerveDriveKinematics<4> kDriveKinematics{
