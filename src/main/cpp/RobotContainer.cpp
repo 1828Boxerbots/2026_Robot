@@ -49,18 +49,18 @@ RobotContainer::RobotContainer() {
   // Turning is controlled by the X axis of the right stick.
 
 
-//   m_drive.SetDefaultCommand(frc2::RunCommand(
-//       [this] {
-//         m_drive.Drive(
-//             -units::meters_per_second_t{frc::ApplyDeadband(
-//                 m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
-//             -units::meters_per_second_t{frc::ApplyDeadband(
-//                 m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
-//             -units::radians_per_second_t{frc::ApplyDeadband(
-//                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-//             true);
-//       },
-//       {&m_drive}));
+  m_drive.SetDefaultCommand(frc2::RunCommand(
+      [this] {
+        m_drive.Drive(
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+            -units::radians_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
+            true);
+      },
+      {&m_drive}));
 
 //    pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower));
 //    pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower));
@@ -85,29 +85,29 @@ void RobotContainer::ConfigureButtonBindings() {
 //                        frc::XboxController::Button::kRightBumper)
 //       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-    
+    // Drive Set X
+      m_driverController.RightBumper().WhileTrue(new frc2::RunCommand([this]{m_drive.SetX(); }, {&m_drive}));
+    // Drive Tag Tracking Enable/Disable
+      m_driverController.LeftBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.ChangeTagTrackingState(); }, {&m_drive}));
 
-    //   m_driverController.RightBumper().WhileTrue(new frc2::RunCommand([this]{m_drive.SetX(); }, {&m_drive}));
+    // Arm Deploy
+    m_driverController2.A().WhileTrue(ArmCmd(&m_arm, ArmConstants::kDeployedPosition).ToPtr());
+    // Arm Stow
+    m_driverController2.B().WhileTrue(ArmCmd(&m_arm, ArmConstants::kStowedPosition).ToPtr());
 
-    // // Arm Deploy
-    // m_driverController2.A().WhileTrue(ArmCmd(&m_arm, ArmConstants::kDeployedPosition).ToPtr());
-    // // Arm Stow
-    // m_driverController2.B().WhileTrue(ArmCmd(&m_arm, ArmConstants::kStowedPosition).ToPtr());
+    // Shoot
+    (!m_driverController2.LeftBumper()
+    && m_driverController2.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity).ToPtr());
+    // Shoot Reverse
+    (m_driverController2.LeftBumper()
+    && m_driverController2.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kShooterVelocity, -TowerConstants::kTowerVelocity).ToPtr());
 
-    // // Shoot
-    // (!m_driverController2.LeftBumper()
-    // && m_driverController2.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity).ToPtr());
-    // // Shoot Reverse
-    // (m_driverController2.LeftBumper()
-    // && m_driverController2.RightTrigger()).WhileTrue(ShootCmd(&m_shooter, &m_tower, -ShooterConstants::kShooterVelocity, -TowerConstants::kTowerVelocity).ToPtr());
-
-    // // Intake
-    // (!m_driverController2.LeftBumper()
-    // && m_driverController2.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, &m_arm, IntakeConstants::kIntakePower).ToPtr());
-    // // Intake Reverse
-    // (m_driverController2.LeftBumper()
-    // && m_driverController2.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, &m_arm, -IntakeConstants::kIntakePower).ToPtr());
-
+    // Intake
+    (!m_driverController2.LeftBumper()
+    && m_driverController2.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, &m_arm, IntakeConstants::kIntakePower).ToPtr());
+    // Intake Reverse
+    (m_driverController2.LeftBumper()
+    && m_driverController2.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, &m_arm, -IntakeConstants::kIntakePower).ToPtr());
 }
 
 

@@ -30,8 +30,6 @@ IntakeSub::~IntakeSub() {}
 void IntakeSub::Periodic()
 {
     frc::SmartDashboard::PutNumber("Intake Motor Power", m_intakeMotor.Get());
-    frc::SmartDashboard::PutNumber("Intake Enocder Velocity", m_intakeEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("Intake PID Set Position", m_intakePid.GetSetpoint());
 }
 
 void IntakeSub::SetVelocity(float velocity)

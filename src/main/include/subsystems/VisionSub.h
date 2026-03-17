@@ -7,27 +7,25 @@
 #include <frc2/command/SubsystemBase.h>
 #include "Constants.h"
 #include <frc/smartdashboard/SmartDashboard.h>
-#include <frc/shuffleboard/Shuffleboard.h>
+#include <opencv2/objdetect/aruco_detector.hpp>
+#include <opencv2/objdetect/charuco_detector.hpp>
 #include <opencv2/opencv.hpp>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleTopic.h>
+#include <networktables/DoubleArrayTopic.h>
+#include <thread>
+#include <string>
 
-struct  AprilTagData
-  {
-    // value is in meters
-    double distance;
-  };
 
 class VisionSub : public frc2::SubsystemBase {
  public:
   VisionSub();
   ~VisionSub();
 
-  static void RunCharucoBoardCailbration();
-
-  static void RunAprilTagDetection();
-
-  static void VisionThread();
-
-  double GetTagTranslation();
+  void RunCharucoBoardCailbration();
+  void RunAprilTagDetection();
+  void VisionThread();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -38,7 +36,9 @@ class VisionSub : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  static std::map<unsigned int, AprilTagData> m_tagData;
-
-  static double m_translationValue;
+  // Network tables
+  nt::NetworkTableInstance inst;
+  nt::DoublePublisher testPub;
+  std::vector<nt::DoubleArrayPublisher> publishers;
+  double idData[9];
 };

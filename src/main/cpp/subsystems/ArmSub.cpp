@@ -93,8 +93,6 @@ void ArmSub::Periodic()
     frc::SmartDashboard::PutNumber("Arm Motor 2 Power", m_rightArmMotor.Get());
     frc::SmartDashboard::PutNumber("Arm Encoder 1 Position", m_leftAbsArmEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Arm Encoder 2 Position", m_rightAbsArmEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("Arm PID 1 Set Position", m_leftArmPid.GetSetpoint());
-    frc::SmartDashboard::PutNumber("Arm PID 2 Set Position", m_rightArmPid.GetSetpoint());
 }
 
 void ArmSub::SimulationPeriodic()

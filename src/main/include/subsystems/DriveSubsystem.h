@@ -23,6 +23,14 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
+// Network Tables
+#include "VisionSub.h"
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleArrayTopic.h>
+#include <networktables/MultiSubscriber.h>
+#include <networktables/NetworkTableListener.h>
+
 
 class DriveSubsystem : public frc2::SubsystemBase {
  public:
@@ -109,6 +117,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
                          -DriveConstants::kTrackWidth / 2}};
 
     frc::ChassisSpeeds GetRelativeChassisSpeeds();
+
+  void ChangeTagTrackingState();
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -126,6 +136,13 @@ class DriveSubsystem : public frc2::SubsystemBase {
   frc::SwerveDriveOdometry<4> m_odometry;
 
   std::shared_ptr<pathplanner::PathPlannerPath> OnTheFlyPathOne();
+
+  // Network Tables + Tag Tracking
+  std::shared_ptr<nt::NetworkTable> redTable;
+  nt::DoubleArraySubscriber redSub;
+  std::shared_ptr<nt::NetworkTable> blueTable;
+  nt::DoubleArraySubscriber blueSub;
+  bool m_tagTacking = false;
 };
 
 
