@@ -32,8 +32,6 @@ VisionSub::VisionSub()
 
     for(int i = 1; i <= 32; i++)
     {
-        // nt::DoubleArrayTopic topic = inst.GetDoubleArrayTopic("/Vision/ID" + std::to_string(i));
-        // nt::DoubleArrayPublisher pub = topic.Publish();
         std::string topicName = "/Vision/Id" + std::to_string(i);
         nt::DoubleArrayPublisher pub = inst.GetDoubleArrayTopic(topicName).Publish();
         pub.SetDefault(idData);
@@ -99,13 +97,13 @@ double VisionSub::GetTagDistance()
 void VisionSub::RunAprilTagDetection()
 {
 
-    // cv::Mat camMatrix, distCoeffs;
-    // cv::FileStorage inputMatrix("/home/lvuser/VisionMatrixConfig.txt", cv::FileStorage::READ);
-    // inputMatrix["camera_matrix"] >> camMatrix;
-    // inputMatrix.release();
-    // cv::FileStorage inputDistortion("/home/lvuser/VisionDistConfig.txt", cv::FileStorage::READ);
-    // inputDistortion["distortion_coefficients"] >> distCoeffs;
-    // inputDistortion.release();
+    cv::Mat camMatrix, distCoeffs;
+    cv::FileStorage inputMatrix("/home/lvuser/VisionMatrixConfig.txt", cv::FileStorage::READ);
+    inputMatrix["camera_matrix"] >> camMatrix;
+    inputMatrix.release();
+    cv::FileStorage inputDistortion("/home/lvuser/VisionDistConfig.txt", cv::FileStorage::READ);
+    inputDistortion["distortion_coefficients"] >> distCoeffs;
+    inputDistortion.release();
 
         // set coordinate system
     cv::Mat objPoints(4, 1, CV_32FC3);
@@ -192,7 +190,7 @@ void VisionSub::RunAprilTagDetection()
                     idData[7] = translationValue; // x value for tag to center of frame (Not in distance)
                     idData[8] = shootVelocity; // velocity ball leaving shooter needs to be
 
-                    
+                    publishers[tagId].Set(idData);
 
                     // inst.GetEntry("Vision/ID" + (i+1)) = idData;
 
