@@ -175,8 +175,8 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
        m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
       pose);
-
       }
+      
 frc::ChassisSpeeds DriveSubsystem::GetRelativeChassisSpeeds() 
 { 
   return kDriveKinematics.ToChassisSpeeds

@@ -23,6 +23,7 @@
 #include "commands/ArmCmd.h"
 #include "commands/LoadCmd.h"
 #include "commands/ShootCmd.h"
+#include "commands/ResetOdometryCmd.h"
 
 // Autononous
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
@@ -65,7 +66,8 @@ RobotContainer::RobotContainer() {
 //    pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower));
    pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
    pathplanner::NamedCommands::registerCommand("Stop Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, 0.0, 0.0));
-   pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(LoadCmd(&m_intake, &m_arm, IntakeConstants::kIntakePower)));
+   pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, &m_arm, IntakeConstants::kIntakePower));
+   pathplanner::NamedCommands::registerCommand("Reset Odometry", std::make_shared<ResetOdometryCmd>(&m_drive));
 //    pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
 //    pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
 
@@ -116,5 +118,6 @@ frc2::Command* RobotContainer::GetAutonomousCommand()
     // std::string filepath = "Simple Auto";
     // return pathplanner::PathPlannerAuto(filepath).ToPtr();
 
+    
     return m_autoChooser.GetSelected();
 }
