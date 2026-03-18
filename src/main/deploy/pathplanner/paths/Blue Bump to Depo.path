@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.7109494232475595,
-        "y": 4.151694764862467
+        "x": 3.5326339285714283,
+        "y": 7.354764862466726
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7109494232475595,
-        "y": 4.151694764862467
+        "x": 3.9108836444589494,
+        "y": 7.151036488345586
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.5941614906832298,
-        "y": 4.151694764862467
+        "x": 0.5,
+        "y": 7.354764862466726
       },
       "prevControl": {
-        "x": 2.5941614906832298,
-        "y": 4.151694764862467
+        "x": 0.21823575936964557,
+        "y": 7.4372036066355465
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depo Start"
     }
   ],
   "rotationTargets": [],
@@ -41,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": null,
