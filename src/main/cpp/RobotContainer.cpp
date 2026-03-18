@@ -85,9 +85,10 @@ void RobotContainer::ConfigureButtonBindings() {
 //                        frc::XboxController::Button::kRightBumper)
 //       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-    
-
+    // Drive Set X
       m_driverController.RightBumper().WhileTrue(new frc2::RunCommand([this]{m_drive.SetX(); }, {&m_drive}));
+    // Drive Tag Tracking Enable/Disable
+      m_driverController.LeftBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.ChangeTagTrackingState(); }, {&m_drive}));
 
     // Arm Deploy
     m_driverController2.A().WhileTrue(ArmCmd(&m_arm, ArmConstants::kDeployedPosition).ToPtr());
@@ -107,7 +108,6 @@ void RobotContainer::ConfigureButtonBindings() {
     // Intake Reverse
     (m_driverController2.LeftBumper()
     && m_driverController2.LeftTrigger()).WhileTrue(LoadCmd(&m_intake, &m_arm, -IntakeConstants::kIntakePower).ToPtr());
-
 }
 
 

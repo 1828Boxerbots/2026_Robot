@@ -3,27 +3,50 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/VisionSub.h"
-#include <thread>
-#include <opencv2/objdetect/aruco_detector.hpp>
-#include <opencv2/opencv.hpp>
-#include <opencv2/objdetect/charuco_detector.hpp>
 #include <cameraserver/CameraServer.h>
-#include <frc/shuffleboard/Shuffleboard.h>
-#include <frc/shuffleboard/ShuffleboardWidget.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <cscore_cv.h>
 
-std::map<unsigned int, AprilTagData> VisionSub::m_tagData;
-double VisionSub::m_translationValue;
 
 VisionSub::VisionSub()
 {
-    // frc::SmartDashboard::PutBoolean("Confirm Calibration", false);
-    frc::SmartDashboard::PutBoolean("Run Cailbration", false);
+    inst = nt::NetworkTableInstance::GetDefault();
+    nt::DoubleTopic testTopic = inst.GetDoubleTopic("/Test/X");
+    testPub = testTopic.Publish();
+    testPub.SetDefault(0.0);
 
-    std::thread visionThread(VisionThread);
+    // visionTable->PutDoubleArray("ID Data", 0.0);
+
+    idData[0] = 0.0; // x
+    idData[1] = 0.0; // y
+    idData[2] = 0.0; // z
+    idData[3] = 0.0; // yaw ?
+    idData[4] = 0.0; // pitch ?
+    idData[5] = 0.0; // roll ?
+    idData[6] = 0.0; // ditance in meters from tag
+    idData[7] = 0.0; // x value for tag to center of frame (Not in distance)
+    idData[8] = 0.0;  // velocity ball leaving shooter needs to be
+
+    for(int i = 1; i <= 32; i++)
+    {
+        std::string topicName = "/Vision/Id" + std::to_string(i);
+        nt::DoubleArrayPublisher pub = inst.GetDoubleArrayTopic(topicName).Publish();
+        pub.SetDefault(idData);
+        
+        publishers.push_back(std::move(pub));
+    }
+
+    
+
+    std::thread visionThread(
+        [&]()
+        {
+            VisionThread();
+        }
+    );
     visionThread.detach();
 }
+
 VisionSub::~VisionSub()
 {}
 
@@ -47,19 +70,14 @@ void VisionSub::VisionThread()
     }
 }
 
-double VisionSub::GetTagTranslation()
-{
-    return m_translationValue;
-}
-
 void VisionSub::RunAprilTagDetection()
 {
     
     cv::Mat camMatrix, distCoeffs;
-    cv::FileStorage inputMatrix("/home/lvuser/VisionMatrixConfig.txt", cv::FileStorage::READ);
+    cv::FileStorage inputMatrix("/home/lvuser/VisionMatrixConfig.yml", cv::FileStorage::READ);
     inputMatrix["camera_matrix"] >> camMatrix;
     inputMatrix.release();
-    cv::FileStorage inputDistortion("/home/lvuser/VisionDistConfig.txt", cv::FileStorage::READ);
+    cv::FileStorage inputDistortion("/home/lvuser/VisionDistConfig.yml", cv::FileStorage::READ);
     inputDistortion["distortion_coefficients"] >> distCoeffs;
     inputDistortion.release();
 
@@ -77,6 +95,7 @@ void VisionSub::RunAprilTagDetection()
 
     cs::UsbCamera camera = frc::CameraServer::StartAutomaticCapture(0);
     camera.SetResolution(640, 480);
+    camera.SetBrightness(25);
     camera.SetFPS(60);
 
     cs::CvSource outputStream = frc::CameraServer::PutVideo("Detector", 640, 480);
@@ -84,62 +103,73 @@ void VisionSub::RunAprilTagDetection()
 
     cs::CvSink feed = frc::CameraServer::GetVideo("USB Camera 0");
 
-    // while (true) {
+    while (true) {
 
-    //     if (feed.GrabFrameNoTimeout(frame) == 0)
-    //     {
-    //         std::cout << "Error: Didn't grab the frame" << std::endl;
-    //     }
-    //     else
-    //     {
-    //         std::vector<int> markerIds;
-    //         std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
-    //         cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
-    //         cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
-    //         cv::aruco::ArucoDetector detector(dictionary, detectorParams);
-    //         detector.detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);
+        if (feed.GrabFrameNoTimeout(frame) == 0)
+        {
+            std::cout << "Error: Didn't grab the frame" << std::endl;
+        }
+        else
+        {
+            std::vector<int> markerIds;
+            std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+            cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
+            cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+            cv::aruco::ArucoDetector detector(dictionary, detectorParams);
+            detector.detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);
+            cv::Mat PosFeed = frame.clone();
+            cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
 
-    //         size_t nMarkers = markerCorners.size();
-    //         std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
+            size_t nMarkers = markerCorners.size();
+            std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
             
-    //         cv::Mat PosFeed = frame.clone();
             
-    //         if(!markerIds.empty()) {
-    //             // Calculate pose for each marker
-    //             // std::cout << objPoints << std::endl << markerCorners.at(0) << std::endl << camMatrix << std::endl << distCoeffs << std::endl;
-    //             for (size_t i = 0; i < nMarkers; i++) {
-    //                 solvePnP(objPoints, markerCorners.at(i), camMatrix, distCoeffs, rvecs.at(i), tvecs.at(i));
-    //             }
+            if(!markerIds.empty()) {
+                // Calculate pose for each marker
+                // std::cout << objPoints << std::endl << markerCorners.at(0) << std::endl << camMatrix << std::endl << distCoeffs << std::endl;
+                for (size_t i = 0; i < nMarkers; i++) { 
+                    // std::cout << objPoints << std::endl << markerCorners.at(i) << std::endl <<  camMatrix << std::endl << distCoeffs << std::endl;
+                    cv::solvePnP(objPoints, markerCorners.at(i), camMatrix, distCoeffs, rvecs.at(i), tvecs.at(i));
+                }
 
-    //             for(unsigned int i = 0; i < markerIds.size(); i++)
-    //             {
+                for(unsigned int i = 0; i < markerIds.size(); i++)
+                {
 
-    //                 unsigned int tagId = markerIds[i];
+                    unsigned int tagId = markerIds[i];
 
-    //                 AprilTagData data
-    //                 {
-    //                     std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)))
-    //                 };
+                    cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
 
-    //                 m_tagData.insert({tagId, data});
-                    
-    //                 cv::drawFrameAxes(PosFeed, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 1.5f, 2);
-    //                 cv::aruco::drawDetectedMarkers(PosFeed, markerCorners, markerIds);
 
-    //                 if((markerIds[i] == 26) || (markerIds[i] == 10))
-    //                 {
-    //                     m_translationValue = tvecs[i](0);
-    //                 }
-    //             }
-    //         }
+                    double distance = std::sqrt((tvecs[i](0) * tvecs[i](0)) + (tvecs[i](1) * tvecs[i](1)) + (tvecs[i](2) * tvecs[i](2)));
+                    double translationValue = (tvecs[i](0) / tvecs[i](2));
+
+                    double m_numeratorCalculation = (VisionConstants::kGravity * (std::pow(distance, 2.0)));
+                    double m_angleCalculation = 2 * (std::pow (cos (VisionConstants::kLaunchAngle), 2));
+                    double m_heightCalculation = (VisionConstants::kShooterHeight + (distance * std::tan(VisionConstants::kLaunchAngle)) - VisionConstants::kHubHeight);
+                    double shootVelocity = std::sqrt(m_numeratorCalculation / (m_angleCalculation * m_heightCalculation));
+
+                    idData[0] = tvecs[i](0); // x
+                    idData[1] = tvecs[i](1); // y
+                    idData[2] = tvecs[i](2); // z
+                    idData[3] = rvecs[i](0); // yaw ?
+                    idData[4] = rvecs[i](1); // pitch ?
+                    idData[5] = rvecs[i](2); // roll ?
+                    idData[6] = distance; // ditance in meters from tag
+                    idData[7] = translationValue; // x value for tag to center of frame (Not in distance)
+                    idData[8] = shootVelocity; // velocity ball leaving shooter needs to be
+
+                    publishers[tagId].Set(idData);
+                }
+            }
             
-    //         outputStream.PutFrame(PosFeed);
-    //     }
-    // }
+            outputStream.PutFrame(PosFeed);
+        }
+    }
 }
 
 void VisionSub::RunCharucoBoardCailbration()
 {   
+    std::cout << "run calibration" << std::endl;
     cv::Mat board;
     cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
@@ -183,7 +213,7 @@ void VisionSub::RunCharucoBoardCailbration()
 
         if (feed.GrabFrameNoTimeout(image) == 0)
         {
-            std::cout << "Error: Didn't grab the frame" << std::endl;
+            std::cout << "Error: Didn't grab the frame :3" << std::endl;
         }
         else
         {
@@ -192,7 +222,7 @@ void VisionSub::RunCharucoBoardCailbration()
         
             cv::Mat outputImage = image.clone();
         
-            if (currentCharucoCorners.total() > 3)
+            if (currentCharucoCorners.total() > 8)
             {
                 charucoBoard.matchImagePoints(currentCharucoCorners, currentCharucoIds, currentObjectPoints, currentImagePoints);
                 // std::cout << std::endl << "I CAN SEE" << std::endl << std::endl;
@@ -216,13 +246,20 @@ void VisionSub::RunCharucoBoardCailbration()
                     // Calibrate camera using ChArUco
                     double repError = cv::calibrateCamera(allObjectPoints, allImagePoints, imageSize, cameraMatrix, distCoeffs, cv::noArray(), cv::noArray(), cv::noArray(), cv::noArray(), cv::noArray());
 
-                    cv::FileStorage outputDistor("/home/lvuser/VisionDistConfig.txt", cv::FileStorage::WRITE);
-                    outputDistor << "distortion_coefficients" << distCoeffs;
-                    outputDistor.release();
-                    
-                    cv::FileStorage outputMatrix("/home/lvuser/VisionMatrixConfig.txt", cv::FileStorage::WRITE);
-                    outputMatrix << "camera_matrix" << cameraMatrix;
-                    outputMatrix.release();
+                    try
+                    {
+                        cv::FileStorage outputDistor("/home/lvuser/VisionDistConfig.yml", cv::FileStorage::WRITE);
+                        outputDistor << "distortion_coefficients" << distCoeffs;
+                        outputDistor.release();
+
+                        cv::FileStorage outputMatrix("/home/lvuser/VisionMatrixConfig.yml", cv::FileStorage::WRITE);
+                        outputMatrix << "camera_matrix" << cameraMatrix;
+                        outputMatrix.release();
+                    }
+                    catch(const std::exception& e)
+                    {
+                        std::cerr << e.what() << '\n';
+                    }
                 }
             }
         

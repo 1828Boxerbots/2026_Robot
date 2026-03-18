@@ -182,3 +182,13 @@ namespace OtherConstants
     inline constexpr double kNeo2FeedForwardRps = 5676.0 / 60;
     
 } // namespce OtherConstants
+
+namespace VisionConstants
+{
+    inline constexpr double kTagTrackingMult = 1.0;
+
+    inline constexpr double kShooterHeight = 0.5207; // In meters
+    inline constexpr double kHubHeight = 1.8288; // In meters
+    inline constexpr double kGravity = 9.81; // In meters per second
+    inline constexpr double kLaunchAngle = (79.0 * (3.14 / 180)); // In degree
+} // namespace VisionConstants

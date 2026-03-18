@@ -84,17 +84,33 @@ DriveSubsystem::DriveSubsystem()
             },
             // Reference to this subsystem to set requirements
             this
-        );        
+        ); // Returns a frc2::CommandPtr that is freed at program termination
 
-          // Returns a frc2::CommandPtr that is freed at program termination
+    // Netowrk Tables
+    // visionSubs = nt::MultiSubscriber{inst, {{"/Vision/Id10", "/Vision/Id26"}}};
+    // poller = nt::NetworkTableListenerPoller{inst};
+    // poller.AddListener(visionSubs, nt::EventFlags::kValueAll);
+    redTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision/Id9");
+    redSub = redTable->GetDoubleArrayTopic("Id9").Subscribe({});
+    blueTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision/Id26");
+    blueSub = blueTable->GetDoubleArrayTopic("Id26").Subscribe({});
 }
 
 void DriveSubsystem::Periodic() {
-  // Implementation of subsystem periodic method goes here.
-  m_odometry.Update(frc::Rotation2d(units::radian_t{
+    // Implementation of subsystem periodic method goes here.
+    m_odometry.Update(frc::Rotation2d(units::radian_t{
                         m_gyro.GetAngle(frc::ADIS16470_IMU::IMUAxis::kZ)}),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+
+    // // read value events
+    // std::vector<nt::Event> events = poller.ReadQueue();
+    // for (auto&& event : events) {
+    //   nt::NetworkTableValue value = event.GetValueEventData()->value;
+    // }
+    
+    frc::SmartDashboard::PutNumberArray("red hub tag data", redSub.Get());
+    frc::SmartDashboard::PutNumberArray("blue hub tag data", blueSub.Get());
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -108,6 +124,19 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       ySpeed.value() * DriveConstants::kMaxSpeed;
   units::radians_per_second_t rotDelivered =
       rot.value() * DriveConstants::kMaxAngularSpeed;
+
+    
+    if(m_tagTacking)
+    {
+        if((redSub.Get())[7] != 0)
+        {
+            // rotDelivered = VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * redSub.Get()[7];
+        }
+        else if((blueSub.Get())[7] != 0)
+        {
+            // rotDelivered = VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * blueSub.Get()[7];
+        }
+    }
 
   auto states = kDriveKinematics.ToSwerveModuleStates(
       fieldRelative
@@ -188,6 +217,10 @@ frc::ChassisSpeeds DriveSubsystem::GetRelativeChassisSpeeds()
   ); 
 }
 
+void DriveSubsystem::ChangeTagTrackingState()
+{
+    m_tagTacking = !m_tagTacking;
+}
 
 // *************************
 //  COMPLEX AUTONOMOUS BELOW

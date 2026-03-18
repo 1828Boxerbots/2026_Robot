@@ -53,10 +53,6 @@ void ShooterSub::Periodic()
     frc::SmartDashboard::PutNumber("Shooter Motor 2 Power", m_rightShooterMotor.Get());
     frc::SmartDashboard::PutNumber("Shooter Encoder 1 Velocity", m_leftShooterEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("Shooter Encoder 2 Velocity", m_rightShooterEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("Shooter PID 1 Set Position", m_leftShooterPid.GetSetpoint());
-    frc::SmartDashboard::PutNumber("Shooter PID 2 Set Position", m_rightShooterPid.GetSetpoint());
-    frc::SmartDashboard::PutNumber("Shooter Left Inverted", m_leftShooterMotor.GetInverted());
-    frc::SmartDashboard::PutNumber("Shooter Right Inverted", m_rightShooterMotor.GetInverted());
 }
 
 void ShooterSub::SetVelocity(float velocity)
