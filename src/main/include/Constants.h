@@ -186,6 +186,7 @@ namespace OtherConstants
 namespace VisionConstants
 {
     inline constexpr double kTagTrackingMult = 1.0;
+    inline constexpr double kDistanceShootingMult = 3.0;
 
     inline constexpr double kShooterHeight = 0.5207; // In meters
     inline constexpr double kHubHeight = 1.8288; // In meters

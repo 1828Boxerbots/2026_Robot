@@ -113,7 +113,8 @@
     "xtree": "cpp",
     "xutility": "cpp",
     "queue": "cpp",
-    "stack": "cpp"
+    "stack": "cpp",
+    "filesystem": "cpp"
   },
   "wpilib.selectDefaultSimulateExtension": true
 }

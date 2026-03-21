@@ -122,7 +122,22 @@ void VisionSub::RunAprilTagDetection()
 
             size_t nMarkers = markerCorners.size();
             std::vector<cv::Vec3d> rvecs(nMarkers), tvecs(nMarkers);
-            
+
+            idData[0] = 0.0; // x
+            idData[1] = 0.0; // y
+            idData[2] = 0.0; // z
+            idData[3] = 0.0; // yaw ?
+            idData[4] = 0.0; // pitch ?
+            idData[5] = 0.0; // roll ?
+            idData[6] = 0.0; // ditance in meters from tag
+            idData[7] = 0.0; // x value for tag to center of frame (Not in distance)
+            idData[8] = 0.0;  // velocity ball leaving shooter needs to be        
+
+            // Zero out network tags
+            for(int i = 0; i < 32; i++)
+            {
+                publishers[i].Set(idData);
+            }
             
             if(!markerIds.empty()) {
                 // Calculate pose for each marker
@@ -158,7 +173,7 @@ void VisionSub::RunAprilTagDetection()
                     idData[7] = translationValue; // x value for tag to center of frame (Not in distance)
                     idData[8] = shootVelocity; // velocity ball leaving shooter needs to be
 
-                    publishers[tagId].Set(idData);
+                    publishers[tagId -1].Set(idData);
                 }
             }
             

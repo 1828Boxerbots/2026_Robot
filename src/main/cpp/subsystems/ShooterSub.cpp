@@ -43,6 +43,11 @@ ShooterSub::ShooterSub()
     
     m_leftShooterMotor.SetInverted(true);
     m_rightShooterMotor.SetInverted(false);
+    
+    redTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
+    redSub = redTable->GetDoubleArrayTopic("Id10").Subscribe({});
+    blueTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
+    blueSub = blueTable->GetDoubleArrayTopic("Id26").Subscribe({});
 }
 
 ShooterSub::~ShooterSub() {}
@@ -57,11 +62,26 @@ void ShooterSub::Periodic()
 
 void ShooterSub::SetVelocity(float velocity)
 {
-    m_leftShooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
-    m_rightShooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+    distanceVelocity = 15.0;
+
+    if((redSub.Get())[7] != 0)
+    {
+        distanceVelocity = VisionConstants::kDistanceShootingMult * redSub.Get()[8];
+    }
+    else if((blueSub.Get())[7] != 0)
+    {
+        distanceVelocity = VisionConstants::kDistanceShootingMult * blueSub.Get()[8];
+    }
+    m_leftShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
+    m_rightShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
 
     // m_leftShooterMotor.Set(0.2);
     // m_rightShooterMotor.Set(0.2);
+}
+
+double ShooterSub::GetTargetVelocity()
+{
+    return distanceVelocity;
 }
 
 std::pair<double, double> ShooterSub::GetVelocity()
@@ -79,6 +99,6 @@ double ShooterSub::GetLeftVelocity()
 
 void ShooterSub::SetPower(float power)
 {
-    m_leftShooterMotor.Set(0.2);
-    m_rightShooterMotor.Set(0.2);
+    m_leftShooterMotor.Set(power);
+    m_rightShooterMotor.Set(power);
 }

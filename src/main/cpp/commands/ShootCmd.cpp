@@ -19,13 +19,15 @@
 
 void ShootCmd::Initialize()
 {
-  m_shootSubsystem->SetVelocity(m_shootSpeed);
+
 }
 
 void ShootCmd::Execute()
 {
-  if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSpeed + m_tolerance)) 
-    && (m_shootSubsystem->GetLeftVelocity() > (m_shootSpeed - m_tolerance)))
+  m_shootSubsystem->SetVelocity(m_shootSpeed);
+
+  if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSubsystem->GetTargetVelocity() + m_tolerance)) 
+    && (m_shootSubsystem->GetLeftVelocity() > (m_shootSubsystem->GetTargetVelocity() - m_tolerance)))
   {
     m_towerSubsystem->SetPower(m_towerSpeed);
   }
@@ -35,7 +37,7 @@ void ShootCmd::Execute()
 
 void ShootCmd::End(bool interupted)
 {
-  m_shootSubsystem->SetVelocity(0);
+  m_shootSubsystem->SetPower(0);
   m_towerSubsystem->SetPower(0);
 }
 

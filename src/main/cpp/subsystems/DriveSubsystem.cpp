@@ -90,9 +90,9 @@ DriveSubsystem::DriveSubsystem()
     // visionSubs = nt::MultiSubscriber{inst, {{"/Vision/Id10", "/Vision/Id26"}}};
     // poller = nt::NetworkTableListenerPoller{inst};
     // poller.AddListener(visionSubs, nt::EventFlags::kValueAll);
-    redTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision/Id9");
-    redSub = redTable->GetDoubleArrayTopic("Id9").Subscribe({});
-    blueTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision/Id26");
+    redTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
+    redSub = redTable->GetDoubleArrayTopic("Id10").Subscribe({});
+    blueTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
     blueSub = blueTable->GetDoubleArrayTopic("Id26").Subscribe({});
 }
 
@@ -130,11 +130,11 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
     {
         if((redSub.Get())[7] != 0)
         {
-            // rotDelivered = VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * redSub.Get()[7];
+            rotDelivered = -VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * redSub.Get()[7];
         }
         else if((blueSub.Get())[7] != 0)
         {
-            // rotDelivered = VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * blueSub.Get()[7];
+            rotDelivered = -VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * blueSub.Get()[7];
         }
     }
 
