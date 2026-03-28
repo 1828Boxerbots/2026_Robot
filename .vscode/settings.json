@@ -114,7 +114,8 @@
     "xutility": "cpp",
     "queue": "cpp",
     "stack": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "setxcmd": "cpp"
   },
   "wpilib.selectDefaultSimulateExtension": true
 }

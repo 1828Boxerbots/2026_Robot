@@ -62,16 +62,16 @@ void ShooterSub::Periodic()
 
 void ShooterSub::SetVelocity(float velocity)
 {
-    distanceVelocity = 15.0;
+    distanceVelocity = 20.0;
 
-    if((redSub.Get())[7] != 0)
-    {
-        distanceVelocity = VisionConstants::kDistanceShootingMult * redSub.Get()[8];
-    }
-    else if((blueSub.Get())[7] != 0)
-    {
-        distanceVelocity = VisionConstants::kDistanceShootingMult * blueSub.Get()[8];
-    }
+    // if((redSub.Get())[7] != 0)
+    // {
+    //     distanceVelocity = VisionConstants::kDistanceShootingMult * redSub.Get()[8];
+    // }
+    // else if((blueSub.Get())[7] != 0)
+    // {
+    //     distanceVelocity = VisionConstants::kDistanceShootingMult * blueSub.Get()[8];
+    // }
     m_leftShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
     m_rightShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
 

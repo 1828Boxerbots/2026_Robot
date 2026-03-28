@@ -23,6 +23,7 @@
 #include "commands/ArmCmd.h"
 #include "commands/LoadCmd.h"
 #include "commands/ShootCmd.h"
+#include "commands/SetXCmd.h"
 #include "commands/ResetOdometryCmd.h"
 
 // Autononous
@@ -68,6 +69,7 @@ RobotContainer::RobotContainer() {
    pathplanner::NamedCommands::registerCommand("Stop Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, 0.0, 0.0));
    pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, &m_arm, IntakeConstants::kIntakePower));
    pathplanner::NamedCommands::registerCommand("Reset Odometry", std::make_shared<ResetOdometryCmd>(&m_drive));
+   pathplanner::NamedCommands::registerCommand("Set X", std::make_shared<SetXCmd>(&m_drive));
 //    pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
 //    pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
 

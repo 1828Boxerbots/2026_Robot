@@ -102,6 +102,8 @@ void DriveSubsystem::Periodic() {
                         m_gyro.GetAngle(frc::ADIS16470_IMU::IMUAxis::kZ)}),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+    
+    frc::SmartDashboard::PutBoolean("Tracking Enabled", m_tagTacking);
 
     // // read value events
     // std::vector<nt::Event> events = poller.ReadQueue();

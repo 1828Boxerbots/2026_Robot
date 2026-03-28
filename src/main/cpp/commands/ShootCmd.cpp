@@ -19,12 +19,11 @@
 
 void ShootCmd::Initialize()
 {
-
+  m_shootSubsystem->SetVelocity(m_shootSpeed);
 }
 
 void ShootCmd::Execute()
 {
-  m_shootSubsystem->SetVelocity(m_shootSpeed);
 
   if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSubsystem->GetTargetVelocity() + m_tolerance)) 
     && (m_shootSubsystem->GetLeftVelocity() > (m_shootSubsystem->GetTargetVelocity() - m_tolerance)))

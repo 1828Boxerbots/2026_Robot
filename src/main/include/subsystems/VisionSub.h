@@ -16,6 +16,7 @@
 #include <networktables/DoubleArrayTopic.h>
 #include <thread>
 #include <string>
+#include <queue>
 
 
 class VisionSub : public frc2::SubsystemBase {
