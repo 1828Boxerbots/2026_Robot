@@ -38,13 +38,13 @@ VisionSub::VisionSub()
 
     
 
-    std::thread visionThread(
-        [&]()
-        {
-            VisionThread();
-        }
-    );
-    visionThread.detach();
+    // std::thread visionThread(
+    //     [&]()
+    //     {
+    //         VisionThread();
+    //     }
+    // );
+    // visionThread.detach();
 }
 
 VisionSub::~VisionSub()
