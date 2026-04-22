@@ -43,6 +43,11 @@ ShooterSub::ShooterSub()
     
     m_leftShooterMotor.SetInverted(true);
     m_rightShooterMotor.SetInverted(false);
+    
+    redTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
+    redSub = redTable->GetDoubleArrayTopic("Id10").Subscribe({});
+    blueTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
+    blueSub = blueTable->GetDoubleArrayTopic("Id26").Subscribe({});
 }
 
 ShooterSub::~ShooterSub() {}
@@ -53,19 +58,30 @@ void ShooterSub::Periodic()
     frc::SmartDashboard::PutNumber("Shooter Motor 2 Power", m_rightShooterMotor.Get());
     frc::SmartDashboard::PutNumber("Shooter Encoder 1 Velocity", m_leftShooterEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("Shooter Encoder 2 Velocity", m_rightShooterEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("Shooter PID 1 Set Position", m_leftShooterPid.GetSetpoint());
-    frc::SmartDashboard::PutNumber("Shooter PID 2 Set Position", m_rightShooterPid.GetSetpoint());
-    frc::SmartDashboard::PutNumber("Shooter Left Inverted", m_leftShooterMotor.GetInverted());
-    frc::SmartDashboard::PutNumber("Shooter Right Inverted", m_rightShooterMotor.GetInverted());
 }
 
 void ShooterSub::SetVelocity(float velocity)
 {
-    m_leftShooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
-    m_rightShooterPid.SetReference(velocity, rev::spark::SparkMax::ControlType::kVelocity);
+    distanceVelocity = 20.0;
+
+    // if((redSub.Get())[7] != 0)
+    // {
+    //     distanceVelocity = VisionConstants::kDistanceShootingMult * redSub.Get()[8];
+    // }
+    // else if((blueSub.Get())[7] != 0)
+    // {
+    //     distanceVelocity = VisionConstants::kDistanceShootingMult * blueSub.Get()[8];
+    // }
+    m_leftShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
+    m_rightShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
 
     // m_leftShooterMotor.Set(0.2);
     // m_rightShooterMotor.Set(0.2);
+}
+
+double ShooterSub::GetTargetVelocity()
+{
+    return distanceVelocity;
 }
 
 std::pair<double, double> ShooterSub::GetVelocity()
@@ -83,6 +99,6 @@ double ShooterSub::GetLeftVelocity()
 
 void ShooterSub::SetPower(float power)
 {
-    m_leftShooterMotor.Set(0.2);
-    m_rightShooterMotor.Set(0.2);
+    m_leftShooterMotor.Set(power);
+    m_rightShooterMotor.Set(power);
 }

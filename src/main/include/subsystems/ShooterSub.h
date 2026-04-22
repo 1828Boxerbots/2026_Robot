@@ -8,6 +8,9 @@
 #include <rev/config/SparkMaxConfig.h>
 #include <rev/SparkClosedLoopController.h>
 #include <rev/RelativeEncoder.h>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleArrayTopic.h>
 
 class ShooterSub : public frc2::SubsystemBase {
  public:
@@ -19,6 +22,8 @@ class ShooterSub : public frc2::SubsystemBase {
   void SetVelocity(float velocity);
 
   void SetPower(float power);
+
+  double GetTargetVelocity();
 
   std::pair<double, double> GetVelocity();
 
@@ -35,4 +40,10 @@ class ShooterSub : public frc2::SubsystemBase {
   rev::spark::SparkClosedLoopController m_rightShooterPid = m_rightShooterMotor.GetClosedLoopController();
 
   double m_conversionFactor;
+
+  double distanceVelocity;
+  std::shared_ptr<nt::NetworkTable> redTable;
+  nt::DoubleArraySubscriber redSub;
+  std::shared_ptr<nt::NetworkTable> blueTable;
+  nt::DoubleArraySubscriber blueSub;
 };

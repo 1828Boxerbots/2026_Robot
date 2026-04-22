@@ -24,18 +24,19 @@ void ShootCmd::Initialize()
 
 void ShootCmd::Execute()
 {
-  if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSpeed + m_tolerance)) 
-    && (m_shootSubsystem->GetLeftVelocity() > (m_shootSpeed - m_tolerance)))
+
+  if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSubsystem->GetTargetVelocity() + m_tolerance)) 
+    && (m_shootSubsystem->GetLeftVelocity() > (m_shootSubsystem->GetTargetVelocity() - m_tolerance)))
   {
     m_towerSubsystem->SetPower(m_towerSpeed);
   }
   
-    std::cout << m_shootSpeed << std::endl;
+    // std::cout << m_shootSpeed << std::endl;
 }
 
 void ShootCmd::End(bool interupted)
 {
-  m_shootSubsystem->SetVelocity(0);
+  m_shootSubsystem->SetPower(0);
   m_towerSubsystem->SetPower(0);
 }
 

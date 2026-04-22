@@ -35,66 +35,84 @@ DriveSubsystem::DriveSubsystem()
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
                  frc::Pose2d{}} {
 
-//    pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
+   pathplanner::RobotConfig config = pathplanner::RobotConfig::fromGUISettings();
 
-//         // Configure the AutoBuilder last
-//         pathplanner::AutoBuilder::configure(
-//             // Robot pose supplier  
-//             [this]()
-//             {
-//                 return GetPose();
-//             },
-//             // Method to reset odometry (will be called if your auto has a starting pose)
-//             [this](const frc::Pose2d& pose)
-//             { 
-//                 this->ResetOdometry(pose); 
-//             },
-//             // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-//             [this]()
-//             {
-//                 return GetRelativeChassisSpeeds();
-//             },
-//             // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-//             [this](const frc::ChassisSpeeds& speeds)
-//             { 
-//                 units::meters_per_second_t xSpeed = speeds.vx;
-//                 units::meters_per_second_t ySpeed = speeds.vy;
-//                 units::radians_per_second_t rot = speeds.omega;
+        // Configure the AutoBuilder last
+        pathplanner::AutoBuilder::configure(
+            // Robot pose supplier  
+            [this]()
+            {
+                return GetPose();
+            },
+            // Method to reset odometry (will be called if your auto has a starting pose)
+            [this](const frc::Pose2d& pose)
+            { 
+                this->ResetOdometry(pose); 
+            },
+            // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            [this]()
+            {
+                return GetRelativeChassisSpeeds();
+            },
+            // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            [this](const frc::ChassisSpeeds& speeds)
+            { 
+                units::meters_per_second_t xSpeed = speeds.vx;
+                units::meters_per_second_t ySpeed = speeds.vy;
+                units::radians_per_second_t rot = speeds.omega;
 
-//                 this->Drive(xSpeed, ySpeed, rot, false); 
-//             },
-//             // PPHolonomicController is the built in path following controller for holonomic drive trains
-//             std::make_shared<pathplanner::PPHolonomicDriveController>
-//             ( 
-//                 pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
-//                 pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
-//             ),
-//             // The robot configuration
-//             config,
-//             // Boolean supplier that controls when the path will be mirrored for the red alliance
-//             // This will flip the path being followed to the red side of the field.
-//             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
-//             []() 
-//             {
-//                 auto alliance = frc::DriverStation::GetAlliance();
-//                 if (alliance) 
-//                     return alliance.value() == frc::DriverStation::Alliance::kRed;
+                this->Drive(xSpeed, ySpeed, rot, false); 
+            },
+            // PPHolonomicController is the built in path following controller for holonomic drive trains
+            std::make_shared<pathplanner::PPHolonomicDriveController>
+            ( 
+                pathplanner::PIDConstants(0.04, 0.0, 0.0), // Translation PID constants
+                pathplanner::PIDConstants(1, 0.0, 0.0) // Rotation PID constants
+            ),
+            // The robot configuration
+            config,
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE 
+            []() 
+            {
+                auto alliance = frc::DriverStation::GetAlliance();
+                if (alliance) 
+                    return alliance.value() == frc::DriverStation::Alliance::kRed;
                     
-//                 return false;
-//             },
-//             // Reference to this subsystem to set requirements
-//             this
-//         );        
+                return false;
+            },
+            // Reference to this subsystem to set requirements
+            this
+        ); // Returns a frc2::CommandPtr that is freed at program termination
 
-          // Returns a frc2::CommandPtr that is freed at program termination
+    // Netowrk Tables
+    // visionSubs = nt::MultiSubscriber{inst, {{"/Vision/Id10", "/Vision/Id26"}}};
+    // poller = nt::NetworkTableListenerPoller{inst};
+    // poller.AddListener(visionSubs, nt::EventFlags::kValueAll);
+    redTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
+    redSub = redTable->GetDoubleArrayTopic("Id10").Subscribe({});
+    blueTable = nt::NetworkTableInstance::GetDefault().GetTable("/Vision");
+    blueSub = blueTable->GetDoubleArrayTopic("Id26").Subscribe({});
 }
 
 void DriveSubsystem::Periodic() {
-  // Implementation of subsystem periodic method goes here.
-  m_odometry.Update(frc::Rotation2d(units::radian_t{
+    // Implementation of subsystem periodic method goes here.
+    m_odometry.Update(frc::Rotation2d(units::radian_t{
                         m_gyro.GetAngle(frc::ADIS16470_IMU::IMUAxis::kZ)}),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
+    
+    frc::SmartDashboard::PutBoolean("Tracking Enabled", m_tagTacking);
+
+    // // read value events
+    // std::vector<nt::Event> events = poller.ReadQueue();
+    // for (auto&& event : events) {
+    //   nt::NetworkTableValue value = event.GetValueEventData()->value;
+    // }
+    
+    frc::SmartDashboard::PutNumberArray("red hub tag data", redSub.Get());
+    frc::SmartDashboard::PutNumberArray("blue hub tag data", blueSub.Get());
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
@@ -108,6 +126,19 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       ySpeed.value() * DriveConstants::kMaxSpeed;
   units::radians_per_second_t rotDelivered =
       rot.value() * DriveConstants::kMaxAngularSpeed;
+
+    
+    if(m_tagTacking)
+    {
+        if((redSub.Get())[7] != 0)
+        {
+            rotDelivered = -VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * redSub.Get()[7];
+        }
+        else if((blueSub.Get())[7] != 0)
+        {
+            rotDelivered = -VisionConstants::kTagTrackingMult * DriveConstants::kMaxAngularSpeed * blueSub.Get()[7];
+        }
+    }
 
   auto states = kDriveKinematics.ToSwerveModuleStates(
       fieldRelative
@@ -175,8 +206,8 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
        m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
       pose);
-
       }
+      
 frc::ChassisSpeeds DriveSubsystem::GetRelativeChassisSpeeds() 
 { 
   return kDriveKinematics.ToChassisSpeeds
@@ -188,6 +219,10 @@ frc::ChassisSpeeds DriveSubsystem::GetRelativeChassisSpeeds()
   ); 
 }
 
+void DriveSubsystem::ChangeTagTrackingState()
+{
+    m_tagTacking = !m_tagTacking;
+}
 
 // *************************
 //  COMPLEX AUTONOMOUS BELOW

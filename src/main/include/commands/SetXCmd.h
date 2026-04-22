@@ -3,15 +3,15 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 
-#include "subsystems/ArmSub.h"
+#include "subsystems/DriveSubsystem.h"
 #include "Constants.h"
 #include "Util.h"
 
-class ArmCmd : public frc2::CommandHelper<frc2::Command, ArmCmd> 
+class SetXCmd : public frc2::CommandHelper<frc2::Command, SetXCmd> 
 {
 
  public:
-  ArmCmd(ArmSub *m_armSubsystem, double pos);
+  SetXCmd(DriveSubsystem *m_driveSub);
 
   void Initialize() override;
 
@@ -22,8 +22,5 @@ class ArmCmd : public frc2::CommandHelper<frc2::Command, ArmCmd>
   bool IsFinished() override;
 
  private:
-  ArmSub *m_armSubsystem = nullptr; 
-
-  bool m_isFinished;
-  double m_targetPosition;
+  DriveSubsystem *m_driveSub = nullptr; 
 };

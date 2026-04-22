@@ -32,8 +32,6 @@ TowerSub::~TowerSub() {}
 void TowerSub::Periodic()
 {
     frc::SmartDashboard::PutNumber("Tower Motor Power", m_towerMotor.Get());
-    frc::SmartDashboard::PutNumber("Tower Enocder Velocity", m_towerEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("Tower PID Set Position", m_towerPid.GetSetpoint());
 }
 
 void TowerSub::SetVelocity(float velocity)

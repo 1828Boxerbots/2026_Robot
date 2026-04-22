@@ -45,7 +45,8 @@ class RobotContainer {
 
  private:
   // The driver's controller
-  frc2::CommandXboxController m_driverController{OIConstants::kDriverControllerPort};
+  frc2::CommandXboxController m_driverController{OIConstants::kDriverControllerPort0};
+  frc2::CommandXboxController m_driverController2{OIConstants::kDriverControllerPort1};
 
   // The robot's subsystems and commands are defined here...
 
