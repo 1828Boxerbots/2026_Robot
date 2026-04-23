@@ -62,7 +62,7 @@ void ShooterSub::Periodic()
 
 void ShooterSub::SetVelocity(float velocity)
 {
-    distanceVelocity = 20.0;
+    distanceVelocity = velocity;
 
     // if((redSub.Get())[7] != 0)
     // {
