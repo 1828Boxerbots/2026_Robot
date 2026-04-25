@@ -1,30 +1,26 @@
 #include "subsystems/DemoMode.h"
-
 #include <frc/smartdashboard/SmartDashboard.h>
 
-namespace C418
+bool DemoMode::s_DemoModeEnabled = false;
+
+DemoMode::DemoMode()
 {
-    bool DemoMode::s_DemoModeEnabled = false;
+    SetName("DemoMode");
+}
 
-    DemoMode::DemoMode()
-    {
-        SetName("DemoMode");
-    }
+DemoMode::~DemoMode()
+{
+    // NOTE: Currently does nothing
+}
 
-    DemoMode::~DemoMode()
-    {
-        // NOTE: Currently does nothing
-    }
+void DemoMode::Init()
+{
+    // NOTE: Currently does nothing
+}
 
-    void DemoMode::Init()
-    {
-        // NOTE: Currently does nothing
-    }
+void DemoMode::Periodic()
+{
+    s_DemoModeEnabled = m_DemoSwitch.Get();
 
-    void DemoMode::Periodic()
-    {
-        // s_DemoModeEnabled = m_DemoModeSwitch.Get();
-
-        // frc::SmartDashboard::PutBoolean("Demo Mode Enabled", s_DemoModeEnabled);
-    }
+    frc::SmartDashboard::PutBoolean("Demo Mode Enabled", s_DemoModeEnabled);
 }

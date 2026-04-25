@@ -196,4 +196,5 @@ namespace VisionConstants
 namespace DemoModeConstants
 {
     inline constexpr int kDemoSwitchPort = 5;
+    inline constexpr double kDriveMult = 0.5;
 } // namespace DemoModeConstants

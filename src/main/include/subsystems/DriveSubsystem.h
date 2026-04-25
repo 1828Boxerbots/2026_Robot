@@ -16,6 +16,7 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "DemoMode.h"
 
 //Pathplanner includes
 #include <pathplanner/lib/path/PathPlannerPath.h>

@@ -119,6 +119,15 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                            units::meters_per_second_t ySpeed,
                            units::radians_per_second_t rot,
                            bool fieldRelative) {
+    
+    // Seting values for demo
+    if (DemoMode::GetDemoMode())
+    {
+        xSpeed = xSpeed * DemoModeConstants::kDriveMult;
+        ySpeed = ySpeed * DemoModeConstants::kDriveMult;
+        rot = rot * DemoModeConstants::kDriveMult;
+    }
+
   // Convert the commanded speeds into the correct units for the drivetrain
   units::meters_per_second_t xSpeedDelivered =
       xSpeed.value() * DriveConstants::kMaxSpeed;
