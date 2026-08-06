@@ -195,6 +195,13 @@ namespace VisionConstants
 
 namespace DemoModeConstants
 {
-    inline constexpr int kDemoSwitchPort = 5;
+    inline constexpr int kDemoSwitchPort = 0;
     inline constexpr double kDriveMult = 0.5;
 } // namespace DemoModeConstants
+
+namespace LEDConstants
+{
+    inline constexpr int kLEDPort = 0;
+    // inline constexpr int kPIXEL_COUNT = 213;
+    inline constexpr int kPIXEL_COUNT = 5;
+} // namespace LEDConstnats
