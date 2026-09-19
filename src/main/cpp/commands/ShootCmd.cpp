@@ -24,6 +24,7 @@ void ShootCmd::Initialize()
 
 void ShootCmd::Execute()
 {
+  std::cout << "TargetVelocity" << m_shootSubsystem->GetTargetVelocity() << std::endl;
 
   if ((m_shootSubsystem->GetLeftVelocity() < (m_shootSubsystem->GetTargetVelocity() + m_tolerance)) 
     && (m_shootSubsystem->GetLeftVelocity() > (m_shootSubsystem->GetTargetVelocity() - m_tolerance)))
