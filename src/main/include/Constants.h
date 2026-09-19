@@ -197,6 +197,9 @@ namespace DemoModeConstants
 {
     inline constexpr int kDemoSwitchPort = 0;
     inline constexpr double kDriveMult = 0.5;
+
+    // Demo Powers
+    inline constexpr double kShooterDemoVelocity = 10;
 } // namespace DemoModeConstants
 
 namespace LEDConstants

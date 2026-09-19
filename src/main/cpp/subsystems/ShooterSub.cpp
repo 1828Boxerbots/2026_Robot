@@ -72,8 +72,16 @@ void ShooterSub::SetVelocity(float velocity)
     // {
     //     distanceVelocity = VisionConstants::kDistanceShootingMult * blueSub.Get()[8];
     // }
-    m_leftShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
-    m_rightShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
+    if(DemoMode::GetDemoMode())
+    {
+         m_leftShooterPid.SetReference(DemoModeConstants::kShooterDemoVelocity, rev::spark::SparkMax::ControlType::kVelocity);
+        m_rightShooterPid.SetReference(DemoModeConstants::kShooterDemoVelocity, rev::spark::SparkMax::ControlType::kVelocity);
+    }
+    else
+    {
+        m_leftShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
+        m_rightShooterPid.SetReference(distanceVelocity, rev::spark::SparkMax::ControlType::kVelocity);
+    }
 
     // m_leftShooterMotor.Set(0.2);
     // m_rightShooterMotor.Set(0.2);
@@ -81,7 +89,14 @@ void ShooterSub::SetVelocity(float velocity)
 
 double ShooterSub::GetTargetVelocity()
 {
-    return distanceVelocity;
+    if(DemoMode::GetDemoMode())
+    {
+        return DemoModeConstants::kShooterDemoVelocity;
+    }
+    else
+    {
+        return distanceVelocity;
+    }
 }
 
 std::pair<double, double> ShooterSub::GetVelocity()

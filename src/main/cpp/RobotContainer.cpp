@@ -63,35 +63,35 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 
-//    pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower));
-//    pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower));
-   pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
-   pathplanner::NamedCommands::registerCommand("Stop Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, 0.0, 0.0));
-   pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, &m_arm, IntakeConstants::kIntakePower));
-   pathplanner::NamedCommands::registerCommand("Reset Odometry", std::make_shared<ResetOdometryCmd>(&m_drive));
-   pathplanner::NamedCommands::registerCommand("Set X", std::make_shared<SetXCmd>(&m_drive));
-//    pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
-//    pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+// //    pathplanner::NamedCommands::registerCommand("Deploy Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kDeployedPosition, IntakeConstants::kIntakePower));
+// //    pathplanner::NamedCommands::registerCommand("Retract Arm", std::make_shared<ArmCmd>(&m_arm, &m_intake, ArmConstants::kStowedPosition, -IntakeConstants::kIntakePower));
+//    pathplanner::NamedCommands::registerCommand("Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, ShooterConstants::kShooterVelocity, TowerConstants::kTowerVelocity));
+//    pathplanner::NamedCommands::registerCommand("Stop Shoot", std::make_shared<ShootCmd>(&m_shooter, &m_tower, 0.0, 0.0));
+//    pathplanner::NamedCommands::registerCommand("Intake", std::make_shared<LoadCmd>(&m_intake, &m_arm, IntakeConstants::kIntakePower));
+//    pathplanner::NamedCommands::registerCommand("Reset Odometry", std::make_shared<ResetOdometryCmd>(&m_drive));
+//    pathplanner::NamedCommands::registerCommand("Set X", std::make_shared<SetXCmd>(&m_drive));
+// //    pathplanner::NamedCommands::registerCommand("Intake Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
+// //    pathplanner::NamedCommands::registerCommand("Shoot Reverse", std::make_shared<LoadCmd>(&m_intake, -IntakeConstants::kIntakeVelocity));
 
 
     ConfigureButtonBindings();
 
 
-    m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
-    frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
+//     m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+//     frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
 }
 
 void RobotContainer::ConfigureButtonBindings() {
 
-//   frc2::JoystickButton(&m_driverController,
-//                        frc::XboxController::Button::kRightBumper)
-//       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
+// //   frc2::JoystickButton(&m_driverController,
+// //                        frc::XboxController::Button::kRightBumper)
+// //       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
     // Drive Set X
       m_driverController.RightBumper().WhileTrue(new frc2::RunCommand([this]{m_drive.SetX(); }, {&m_drive}));
-    // Drive Tag Tracking Enable/Disable
-      m_driverController.LeftBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.ChangeTagTrackingState(); }, {&m_drive}));
-
+//     // Drive Tag Tracking Enable/Disable
+//       m_driverController.LeftBumper().WhileTrue(new frc2::InstantCommand([this]{m_drive.ChangeTagTrackingState(); }, {&m_drive}));
+    
     // Arm Deploy
     m_driverController2.A().WhileTrue(ArmCmd(&m_arm, ArmConstants::kDeployedPosition).ToPtr());
     // Arm Stow

@@ -11,6 +11,7 @@
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleArrayTopic.h>
+#include "subsystems/DemoMode.h"
 
 class ShooterSub : public frc2::SubsystemBase {
  public:
