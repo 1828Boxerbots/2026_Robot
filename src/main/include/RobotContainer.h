@@ -21,6 +21,7 @@
 #include "subsystems/TowerSub.h"
 #include "subsystems/ShooterSub.h"
 #include "subsystems/VisionSub.h"
+#include "subsystems/DemoMode.h"
 
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <memory>
@@ -57,6 +58,7 @@ class RobotContainer {
   ArmSub m_arm; 
   TowerSub  m_tower;
   ShooterSub m_shooter;
+  DemoMode m_deomSwitch;
 
 
   // The chooser for the autonomous routines
