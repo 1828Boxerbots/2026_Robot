@@ -22,13 +22,10 @@
 #include "subsystems/ShooterSub.h"
 #include "subsystems/VisionSub.h"
 #include "subsystems/DemoMode.h"
+#include "subsystems/LimeLight.h"
 
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <memory>
-
-
-
-
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -43,6 +40,7 @@ class RobotContainer {
 
   frc2::Command* GetAutonomousCommand();
 
+  DriveSubsystem m_drive;
 
  private:
   // The driver's controller
@@ -52,13 +50,13 @@ class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   // The robot's subsystems
-  DriveSubsystem m_drive;
   // VisionSub m_Vision;
   IntakeSub m_intake;
   ArmSub m_arm; 
   TowerSub  m_tower;
   ShooterSub m_shooter;
   DemoMode m_deomSwitch;
+  LimeLight m_limeLight;
 
 
   // The chooser for the autonomous routines

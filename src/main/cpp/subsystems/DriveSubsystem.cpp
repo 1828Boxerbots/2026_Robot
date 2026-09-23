@@ -113,6 +113,9 @@ void DriveSubsystem::Periodic() {
     
     frc::SmartDashboard::PutNumberArray("red hub tag data", redSub.Get());
     frc::SmartDashboard::PutNumberArray("blue hub tag data", blueSub.Get());
+
+    m_field.SetRobotPose(m_odometry.GetPose());
+    frc::SmartDashboard::PutData("Field", &m_field);
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,

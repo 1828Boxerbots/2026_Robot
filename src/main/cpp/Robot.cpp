@@ -9,7 +9,13 @@
 #include <frc2/command/CommandScheduler.h>
 #include <iostream>
 
-void Robot::RobotInit() {}
+#include <cmath>
+#include "LimelightHelpers.h"
+
+void Robot::RobotInit() 
+{
+  LimelightHelpers::SetupPortForwardingUSB(0);
+}
 
 /**
  * This function is called every 20 ms, no matter the mode. Use
@@ -19,7 +25,18 @@ void Robot::RobotInit() {}
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() { frc2::CommandScheduler::GetInstance().Run(); }
+void Robot::RobotPeriodic() 
+{ 
+  frc2::CommandScheduler::GetInstance().Run();
+  
+  double omegaRps = m_container.m_drive.GetTurnRate();
+  LimelightHelpers::PoseEstimate llMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue("limelight");
+
+  if(llMeasurement.tagCount > 0 && std::abs(omegaRps) < 2.0)
+  {
+    m_container.m_drive.ResetOdometry(llMeasurement.pose);
+  }
+}
 
 /**
  * This function is called once each time the robot enters Disabled mode. You
